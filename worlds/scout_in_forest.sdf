@@ -1,5 +1,8 @@
 <?xml version="1.0" ?>
-<sdf version="1.10"><world name="scout_in_forest">
+<sdf version="1.10">
+
+<world name="scout_in_forest">
+
 
 <plugin
   filename="gz-sim-physics-system"
@@ -213,4 +216,6 @@
 </model>
 
 
-</world></sdf>
+</world>
+
+</sdf>

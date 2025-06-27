@@ -199,7 +199,7 @@
     <match field="data">16777235</match> <!-- FrontArrowKey: drive frontward -->
   </input>
   <output type="gz.msgs.Twist" topic="/cmd_vel">
-    linear: {x: 2.0}, angular: {z: 0.0}
+    linear: {x: 3.0}, angular: {z: 0.0}
   </output>
 </plugin>
 <plugin
@@ -210,7 +210,7 @@
     <!-- BackArrowKey: drive backward -->
   </input>
   <output type="gz.msgs.Twist" topic="/cmd_vel">
-    linear: {x: -2.0}, angular: {z: 0.0}
+    linear: {x: -3.0}, angular: {z: 0.0}
   </output>
 </plugin>
 <plugin

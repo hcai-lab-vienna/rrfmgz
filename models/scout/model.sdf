@@ -3,249 +3,264 @@
 
 <model name='scout' canonical_link='chassis'>
 
-<link name='chassis'>
-  <pose relative_to='__model__'>0 0 1 0 0 0</pose>
-  <inertial auto="true">
-    <mass>67</mass>
-  </inertial>
-  <visual name='visual'>
-    <geometry>
-      <mesh><uri>meshes/scout_base.dae</uri></mesh>
-    </geometry>
-  </visual>
-  <collision name='collision'>
-    <geometry>
-      <mesh><uri>meshes/scout_base.dae</uri></mesh>
-    </geometry>
-  </collision>
-  <sensor name="imu_sensor" type="imu">
-    <always_on>true</always_on>
-    <update_rate>1</update_rate>
-    <visualize>true</visualize>
-    <topic>scout/imu</topic>
-  </sensor>
-</link>
+  <!-- base_link -->
 
-<link name='force_torque_bar'>
-  <pose relative_to="chassis">0.5 0 -0.025 1.570796327 0 0</pose>
-  <inertial auto="true">
-    <mass>1</mass>
-  </inertial>
-  <visual name='visual'>
-    <geometry>
-      <cylinder>
-        <radius>0.01</radius>
-        <length>0.75</length>
-      </cylinder>
-    </geometry>
-    <material>
-      <ambient>1.0 0.0 0.0 1</ambient>
-      <diffuse>1.0 0.0 0.0 1</diffuse>
-      <specular>1.0 0.0 0.0 1</specular>
-    </material>
-  </visual>
-  <collision name='collision'>
-    <geometry>
-      <cylinder>
-        <radius>0.01</radius>
-        <length>0.75</length>
-      </cylinder>
-    </geometry>
-  </collision>
-</link>
-<joint name='force_torque_bar_joint' type='fixed'>
-  <pose relative_to='force_torque_bar'/>
-  <parent>chassis</parent>
-  <child>force_torque_bar</child>
-  <sensor name='force_torque_bar_sensor' type='force_torque'>
-    <always_on>true</always_on>
-    <update_rate>1</update_rate>
-    <visualize>true</visualize>
-    <topic>scout/force_torque_bar</topic>
-  </sensor>
-</joint>
+  <link name='chassis'>
+    <pose relative_to='__model__'>0 0 1 0 0 0</pose>
+    <inertial auto="true">
+      <mass>50</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <mesh><uri>meshes/scout_base.dae</uri></mesh>
+      </geometry>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <mesh><uri>meshes/scout_base.dae</uri></mesh>
+      </geometry>
+    </collision>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>1</update_rate>
+      <visualize>true</visualize>
+      <topic>scout/imu</topic>
+    </sensor>
+  </link>
 
-<!-- wheels -->
-<link name='front_left_wheel'>
-  <pose relative_to="chassis">0.246 0.290 -0.071 0 0 0</pose>
-  <inertial auto="true">
-    <mass>1</mass>
-  </inertial>
-  <visual name='visual'>
-    <geometry>
-      <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
-    </geometry>
-  </visual>
-  <collision name='collision'>
-    <geometry>
-      <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
-    </geometry>
-  </collision>
-</link>
-<joint name='front_left_wheel_joint' type='revolute'>
-  <pose relative_to='front_left_wheel'/>
-  <parent>chassis</parent>
-  <child>front_left_wheel</child>
-  <axis>
+  <!-- sensor bar -->
+
+  <link name='force_torque_bar'>
+    <pose relative_to="chassis">0.5 0 -0.025 1.57079 0 0</pose>
+    <inertial auto="true">
+      <mass>4</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <cylinder>
+          <radius>0.01</radius>
+          <length>0.75</length>
+        </cylinder>
+      </geometry>
+      <material>
+        <ambient>1.0 0.0 0.0 1</ambient>
+        <diffuse>1.0 0.0 0.0 1</diffuse>
+        <specular>1.0 0.0 0.0 1</specular>
+      </material>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <cylinder>
+          <radius>0.01</radius>
+          <length>0.75</length>
+        </cylinder>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='force_torque_bar_joint' type='fixed'>
+    <pose relative_to='force_torque_bar'/>
+    <parent>chassis</parent>
+    <child>force_torque_bar</child>
+    <sensor name='force_torque_bar_sensor' type='force_torque'>
+      <always_on>true</always_on>
+      <update_rate>1</update_rate>
+      <visualize>true</visualize>
+      <topic>scout/force_torque_bar</topic>
+    </sensor>
+  </joint>
+
+  <!-- wheels -->
+
+  <link name='front_left_wheel'>
+    <pose relative_to="chassis">0.249 0.29153 -0.0702 0 0 0</pose>
+    <inertial auto="true">
+      <mass>8</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
+      </geometry>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='front_left_wheel_joint' type='revolute'>
+    <pose relative_to='front_left_wheel'/>
+    <parent>chassis</parent>
+    <child>front_left_wheel</child>
+    <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+    </axis>
+  </joint>
+
+  <link name='front_right_wheel'>
+    <pose relative_to="chassis">0.249 -0.29153 -0.0702 3.14159 0 0</pose>
+    <inertial auto="true">
+      <mass>8</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
+      </geometry>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='front_right_wheel_joint' type='revolute'>
+    <pose relative_to='front_right_wheel'/>
+    <parent>chassis</parent>
+    <child>front_right_wheel</child>
+    <axis>
       <xyz expressed_in='__model__'>0 1 0</xyz>
       <limit>
-        <lower>-1.79769e+308</lower>
-        <upper>1.79769e+308</upper>
+        <lower>-inf</lower>
+        <upper>inf</upper>
       </limit>
-  </axis>
-</joint>
-<link name='front_right_wheel'>
-  <pose relative_to="chassis">0.246 -0.290 -0.071 3.141592653589 0 0</pose>
-  <inertial auto="true">
-    <mass>1</mass>
-  </inertial>
-  <visual name='visual'>
-    <geometry>
-      <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
-    </geometry>
-  </visual>
-  <collision name='collision'>
-    <geometry>
-      <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
-    </geometry>
-  </collision>
-</link>
-<joint name='front_right_wheel_joint' type='revolute'>
-  <pose relative_to='front_right_wheel'/>
-  <parent>chassis</parent>
-  <child>front_right_wheel</child>
-  <axis>
-    <xyz expressed_in='__model__'>0 1 0</xyz>
-    <limit>
-      <lower>-1.79769e+308</lower>
-      <upper>1.79769e+308</upper>
-    </limit>
-  </axis>
-</joint>
-<link name='back_left_wheel'>
-  <pose relative_to="chassis">-0.246 0.290 -0.071 0 0 0</pose>
-  <inertial auto="true">
-    <mass>1</mass>
-  </inertial>
-  <visual name='visual'>
-    <geometry>
-      <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
-    </geometry>
-  </visual>
-  <collision name='collision'>
-    <geometry>
-      <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
-    </geometry>
-  </collision>
-</link>
-<joint name='back_left_wheel_joint' type='revolute'>
-  <pose relative_to='back_left_wheel'/>
-  <parent>chassis</parent>
-  <child>back_left_wheel</child>
-  <axis>
+    </axis>
+  </joint>
+
+  <link name='back_left_wheel'>
+    <pose relative_to="chassis">-0.249 0.29153 -0.0702 0 0 0</pose>
+    <inertial auto="true">
+      <mass>8</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
+      </geometry>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='back_left_wheel_joint' type='revolute'>
+    <pose relative_to='back_left_wheel'/>
+    <parent>chassis</parent>
+    <child>back_left_wheel</child>
+    <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+    </axis>
+  </joint>
+
+  <link name='back_right_wheel'>
+    <pose relative_to="chassis">-0.249 -0.29153 -0.0702 3.14159 0 0</pose>
+    <inertial auto="true">
+      <mass>8</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
+      </geometry>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='back_right_wheel_joint' type='revolute'>
+    <pose relative_to='back_right_wheel'/>
+    <parent>chassis</parent>
+    <child>back_right_wheel</child>
+    <axis>
       <xyz expressed_in='__model__'>0 1 0</xyz>
       <limit>
-        <lower>-1.79769e+308</lower>
-        <upper>1.79769e+308</upper>
+        <lower>-inf</lower>
+        <upper>inf</upper>
       </limit>
-  </axis>
-</joint>
-<link name='back_right_wheel'>
-  <pose relative_to="chassis">-0.246 -0.290 -0.071 3.141592653589 0 0</pose>
-  <inertial auto="true">
-    <mass>1</mass>
-  </inertial>
-  <visual name='visual'>
-    <geometry>
-      <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
-    </geometry>
-  </visual>
-  <collision name='collision'>
-    <geometry>
-      <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
-    </geometry>
-  </collision>
-</link>
-<joint name='back_right_wheel_joint' type='revolute'>
-  <pose relative_to='back_right_wheel'/>
-  <parent>chassis</parent>
-  <child>back_right_wheel</child>
-  <axis>
-    <xyz expressed_in='__model__'>0 1 0</xyz>
-    <limit>
-      <lower>-1.79769e+308</lower>
-      <upper>1.79769e+308</upper>
-    </limit>
-  </axis>
-</joint>
+    </axis>
+  </joint>
 
-<!-- driving system -->
-<plugin
-  filename="gz-sim-mecanum-drive-system"
-  name="gz::sim::systems::MecanumDrive">
-  <front_left_joint>front_left_wheel_joint</front_left_joint>
-  <front_right_joint>front_right_wheel_joint</front_right_joint>
-  <back_left_joint>back_left_wheel_joint</back_left_joint>
-  <back_right_joint>back_right_wheel_joint</back_right_joint>
-  <wheel_separation>1.2</wheel_separation>
-  <wheel_radius>0.4</wheel_radius>
-  <odom_publish_frequency>1</odom_publish_frequency>
-  <topic>cmd_vel</topic>
-</plugin>
-<plugin
-  filename="gz-sim-triggered-publisher-system"
-  name="gz::sim::systems::TriggeredPublisher">
-  <input type="gz.msgs.Int32" topic="/keyboard/keypress">
-    <match field="data">16777235</match> <!-- FrontArrowKey: drive frontward -->
-  </input>
-  <output type="gz.msgs.Twist" topic="/cmd_vel">
-    linear: {x: 3.0}, angular: {z: 0.0}
-  </output>
-</plugin>
-<plugin
-  filename="gz-sim-triggered-publisher-system"
-  name="gz::sim::systems::TriggeredPublisher">
-  <input type="gz.msgs.Int32" topic="/keyboard/keypress">
-    <match field="data">16777237</match>
-    <!-- BackArrowKey: drive backward -->
-  </input>
-  <output type="gz.msgs.Twist" topic="/cmd_vel">
-    linear: {x: -3.0}, angular: {z: 0.0}
-  </output>
-</plugin>
-<plugin
-  filename="gz-sim-triggered-publisher-system"
-  name="gz::sim::systems::TriggeredPublisher">
-  <input type="gz.msgs.Int32" topic="/keyboard/keypress">
-    <match field="data">16777234</match>
-    <!-- LeftArrowKey: turn left -->
-  </input>
-  <output type="gz.msgs.Twist" topic="/cmd_vel">
-    linear: {x: 0.0}, angular: {z: 1.0}
-  </output>
-</plugin>
-<plugin
-  filename="gz-sim-triggered-publisher-system"
-  name="gz::sim::systems::TriggeredPublisher">
-  <input type="gz.msgs.Int32" topic="/keyboard/keypress">
-    <match field="data">16777236</match>
-    <!-- RightArrowKey: turn right -->
-  </input>
-  <output type="gz.msgs.Twist" topic="/cmd_vel">
-    linear: {x: 0.0}, angular: {z: -1.0}
-  </output>
-</plugin>
-<plugin
-  filename="gz-sim-triggered-publisher-system"
-  name="gz::sim::systems::TriggeredPublisher">
-  <input type="gz.msgs.Int32" topic="/keyboard/keypress">
-    <match field="data">83</match>
-    <!-- s: stop -->
-  </input>
-  <output type="gz.msgs.Twist" topic="/cmd_vel">
-    linear: {x: 0.0}, angular: {z: 0.0}
-  </output>
-</plugin>
+  <!-- driving system -->
+
+  <plugin
+    filename="gz-sim-mecanum-drive-system"
+    name="gz::sim::systems::MecanumDrive">
+    <front_left_joint>front_left_wheel_joint</front_left_joint>
+    <front_right_joint>front_right_wheel_joint</front_right_joint>
+    <back_left_joint>back_left_wheel_joint</back_left_joint>
+    <back_right_joint>back_right_wheel_joint</back_right_joint>
+    <!-- TODO: accurate values -->
+    <wheel_separation>1.2</wheel_separation>
+    <wheel_radius>0.4</wheel_radius>
+    <odom_publish_frequency>1</odom_publish_frequency>
+    <topic>cmd_vel</topic>
+  </plugin>
+
+  <plugin
+    filename="gz-sim-triggered-publisher-system"
+    name="gz::sim::systems::TriggeredPublisher">
+    <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+      <match field="data">16777235</match> <!-- FrontArrowKey: drive frontward -->
+    </input>
+    <output type="gz.msgs.Twist" topic="/cmd_vel">
+      linear: {x: 3.0}, angular: {z: 0.0}
+    </output>
+  </plugin>
+
+  <plugin
+    filename="gz-sim-triggered-publisher-system"
+    name="gz::sim::systems::TriggeredPublisher">
+    <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+      <match field="data">16777237</match>
+      <!-- BackArrowKey: drive backward -->
+    </input>
+    <output type="gz.msgs.Twist" topic="/cmd_vel">
+      linear: {x: -3.0}, angular: {z: 0.0}
+    </output>
+  </plugin>
+
+  <plugin
+    filename="gz-sim-triggered-publisher-system"
+    name="gz::sim::systems::TriggeredPublisher">
+    <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+      <match field="data">16777234</match>
+      <!-- LeftArrowKey: turn left -->
+    </input>
+    <output type="gz.msgs.Twist" topic="/cmd_vel">
+      linear: {x: 0.0}, angular: {z: 1.0}
+    </output>
+  </plugin>
+
+  <plugin
+    filename="gz-sim-triggered-publisher-system"
+    name="gz::sim::systems::TriggeredPublisher">
+    <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+      <match field="data">16777236</match>
+      <!-- RightArrowKey: turn right -->
+    </input>
+    <output type="gz.msgs.Twist" topic="/cmd_vel">
+      linear: {x: 0.0}, angular: {z: -1.0}
+    </output>
+  </plugin>
+
+  <plugin
+    filename="gz-sim-triggered-publisher-system"
+    name="gz::sim::systems::TriggeredPublisher">
+    <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+      <match field="data">83</match>
+      <!-- s: stop -->
+    </input>
+    <output type="gz.msgs.Twist" topic="/cmd_vel">
+      linear: {x: 0.0}, angular: {z: 0.0}
+    </output>
+  </plugin>
 
 </model>
 

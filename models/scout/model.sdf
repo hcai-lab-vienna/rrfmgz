@@ -15,9 +15,24 @@
         <mesh><uri>meshes/scout_base.dae</uri></mesh>
       </geometry>
     </visual>
+    <!--<visual name='collision_box'>
+      <pose relative_to='__model__'>0 0 1 0 0 0</pose>
+      <geometry>
+        <box>
+          <size>0.93 0.42 0.19</size>
+        </box>
+      </geometry>
+      <material>
+        <ambient>0.5 0.5 0.5 0.75</ambient>
+        <diffuse>0.5 0.5 0.5 0.75</diffuse>
+        <specular>0.5 0.5 0.5 0.75</specular>
+      </material>
+    </visual>-->
     <collision name='collision'>
       <geometry>
-        <mesh><uri>meshes/scout_base.dae</uri></mesh>
+        <box>
+          <size>0.93 0.42 0.19</size>
+        </box>
       </geometry>
     </collision>
     <sensor name="imu_sensor" type="imu">
@@ -81,9 +96,27 @@
         <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
       </geometry>
     </visual>
-    <collision name='collision'>
+    <!--<visual name='collision_box'>
+      <pose relative_to="chassis">0.249 0.29153 -0.0702 1.57079 0 0</pose>
       <geometry>
-        <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
+        <cylinder>
+          <radius>0.16</radius>
+          <length>0.11</length>
+        </cylinder>
+      </geometry>
+      <material>
+        <ambient>0.5 0.5 0.5 0.75</ambient>
+        <diffuse>0.5 0.5 0.5 0.75</diffuse>
+        <specular>0.5 0.5 0.5 0.75</specular>
+      </material>
+    </visual>-->
+    <collision name='collision'>
+      <pose relative_to="chassis">0.249 0.29153 -0.0702 1.57079 0 0</pose>
+      <geometry>
+        <cylinder>
+          <radius>0.16</radius>
+          <length>0.11</length>
+        </cylinder>
       </geometry>
     </collision>
   </link>
@@ -110,9 +143,27 @@
         <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
       </geometry>
     </visual>
-    <collision name='collision'>
+    <!--<visual name='collision_box'>
+      <pose relative_to="chassis">0.249 -0.29153 -0.0702 -1.57079 0 0</pose>
       <geometry>
-        <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
+        <cylinder>
+          <radius>0.16</radius>
+          <length>0.11</length>
+        </cylinder>
+      </geometry>
+      <material>
+        <ambient>0.5 0.5 0.5 0.75</ambient>
+        <diffuse>0.5 0.5 0.5 0.75</diffuse>
+        <specular>0.5 0.5 0.5 0.75</specular>
+      </material>
+    </visual>-->
+    <collision name='collision'>
+      <pose relative_to="chassis">0.249 -0.29153 -0.0702 -1.57079 0 0</pose>
+      <geometry>
+        <cylinder>
+          <radius>0.16</radius>
+          <length>0.11</length>
+        </cylinder>
       </geometry>
     </collision>
   </link>
@@ -139,9 +190,27 @@
         <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
       </geometry>
     </visual>
-    <collision name='collision'>
+    <!--<visual name='collision_box'>
+      <pose relative_to="chassis">-0.249 0.29153 -0.0702 1.57079 0 0</pose>
       <geometry>
-        <mesh><uri>meshes/wheel_type1.dae</uri></mesh>
+        <cylinder>
+          <radius>0.16</radius>
+          <length>0.11</length>
+        </cylinder>
+      </geometry>
+      <material>
+        <ambient>0.5 0.5 0.5 0.75</ambient>
+        <diffuse>0.5 0.5 0.5 0.75</diffuse>
+        <specular>0.5 0.5 0.5 0.75</specular>
+      </material>
+    </visual>-->
+    <collision name='collision'>
+      <pose relative_to="chassis">-0.249 0.29153 -0.0702 1.57079 0 0</pose>
+      <geometry>
+        <cylinder>
+          <radius>0.16</radius>
+          <length>0.11</length>
+        </cylinder>
       </geometry>
     </collision>
   </link>
@@ -168,9 +237,27 @@
         <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
       </geometry>
     </visual>
-    <collision name='collision'>
+    <!--<visual name='collision_box'>
+      <pose relative_to="chassis">-0.249 -0.29153 -0.0702 -1.57079 0 0</pose>
       <geometry>
-        <mesh><uri>meshes/wheel_type2.dae</uri></mesh>
+        <cylinder>
+          <radius>0.16</radius>
+          <length>0.11</length>
+        </cylinder>
+      </geometry>
+      <material>
+        <ambient>0.5 0.5 0.5 0.75</ambient>
+        <diffuse>0.5 0.5 0.5 0.75</diffuse>
+        <specular>0.5 0.5 0.5 0.75</specular>
+      </material>
+    </visual>-->
+    <collision name='collision'>
+      <pose relative_to="chassis">-0.249 -0.29153 -0.0702 -1.57079 0 0</pose>
+      <geometry>
+        <cylinder>
+          <radius>0.16</radius>
+          <length>0.11</length>
+        </cylinder>
       </geometry>
     </collision>
   </link>

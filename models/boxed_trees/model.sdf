@@ -121,61 +121,61 @@
   </link>
 
   <include>
-    <uri>models/oak_tree</uri>
+    <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Oak Tree</uri>
     <name>oak_01</name>
     <pose>3.47 3.55 0 0 0 1.37</pose>
   </include>
 
   <include>
-    <uri>models/oak_tree</uri>
+    <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Oak Tree</uri>
     <name>oak_02</name>
     <pose>5.82 -3.83 0 0 0 2.33</pose>
   </include>
 
   <include>
-    <uri>models/oak_tree</uri>
+    <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Oak Tree</uri>
     <name>oak_03</name>
     <pose>2.53 -6.60 0 0 0 0.15</pose>
   </include>
 
   <include>
-    <uri>models/oak_tree</uri>
+    <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Oak Tree</uri>
     <name>oak_04</name>
     <pose>-5.03 -3.42 0 0 0 0.51</pose>
   </include>
 
   <include>
-    <uri>models/oak_tree</uri>
+    <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Oak Tree</uri>
     <name>oak_05</name>
     <pose>-1.82 8.22 0 0 0 1.02</pose>
   </include>
 
   <include>
-    <uri>models/pine_tree</uri>
+    <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Pine Tree</uri>
     <name>pine_01</name>
     <pose>-4.61 3.43 0 0 0 2.02</pose>
   </include>
 
   <include>
-    <uri>models/pine_tree</uri>
+    <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Pine Tree</uri>
     <name>pine_02</name>
     <pose>-6.63 1.96 0 0 0 1.87</pose>
   </include>
 
   <include>
-    <uri>models/pine_tree</uri>
+    <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Pine Tree</uri>
     <name>pine_03</name>
     <pose>-1.87 3.19 0 0 0 0.76</pose>
   </include>
 
   <include>
-    <uri>models/pine_tree</uri>
+    <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Pine Tree</uri>
     <name>pine_04</name>
     <pose>-6.62 7.16 0 0 0 1.89</pose>
   </include>
 
   <include>
-    <uri>models/pine_tree</uri>
+    <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Pine Tree</uri>
     <name>pine_05</name>
     <pose>5.87 7.99 0 0 0 0.01</pose>
   </include>

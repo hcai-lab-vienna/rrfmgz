@@ -51,5 +51,4 @@ qtcreator-*
 CATKIN_IGNORE
 
 # custom
-env
 fuel

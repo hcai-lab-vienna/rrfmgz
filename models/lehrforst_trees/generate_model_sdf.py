@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 # unse only every X trees (1 for all)
-use_trees = 7
+use_trees = 1
+
+# use only trees with diamater X (cm) or larger (0 for all)
+min_diam = 7#cm
 
 # individual tree rotation (radiant)
 tree_rotation = 3.14159
@@ -21,10 +24,10 @@ SDF = """<?xml version="1.0" ?>
 <static>true</static>
 """
 for i, line in enumerate(lines[1:]):
-    if i % use_trees:
-        continue
     x, y, z, w = map(float, line.split(','))
-    radius = round(w * 0.005, 3)
+    if w < min_diam or i % use_trees:
+        continue
+    radius = round(w * 0.005, 3) # convert from cm (/100) and diamater (/2)
     SDF +=f"""
   <link name='tree_{i+1:0>4}'>
     <pose>{x} {y} {z} {tree_rotation} 0 0</pose>

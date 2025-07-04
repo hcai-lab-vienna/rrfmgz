@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # unse only every X trees (1 for all)
-use_trees = 3
+use_trees = 7
 
 # use only trees with diamater X (cm) or larger (0 for all)
 min_diam = 7#cm

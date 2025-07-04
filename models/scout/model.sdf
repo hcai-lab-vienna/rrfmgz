@@ -45,17 +45,16 @@
 
   <!-- sensor bar -->
 
-  <link name='force_torque_bar'>
-    <pose relative_to="chassis">0.5 0 -0.025 1.57079 0 0</pose>
+  <link name='force_bar_P0_link'>
+    <pose relative_to="chassis">0.466 0.28 -0.025 1.57079 0 0.43633</pose>
     <inertial auto="true">
-      <mass>4</mass>
+      <mass>1</mass>
     </inertial>
     <visual name='visual'>
       <geometry>
-        <cylinder>
-          <radius>0.01</radius>
-          <length>0.75</length>
-        </cylinder>
+        <box>
+          <size>0.005 0.15 0.14</size>
+        </box>
       </geometry>
       <material>
         <ambient>1.0 0.0 0.0 1</ambient>
@@ -65,22 +64,169 @@
     </visual>
     <collision name='collision'>
       <geometry>
-        <cylinder>
-          <radius>0.01</radius>
-          <length>0.75</length>
-        </cylinder>
+        <box>
+          <size>0.005 0.15 0.14</size>
+        </box>
       </geometry>
     </collision>
   </link>
-  <joint name='force_torque_bar_joint' type='fixed'>
-    <pose relative_to='force_torque_bar'/>
+  <joint name='force_bar_P0_joint' type='fixed'>
+    <pose relative_to='force_bar_P0_link'/>
     <parent>chassis</parent>
-    <child>force_torque_bar</child>
-    <sensor name='force_torque_bar_sensor' type='force_torque'>
+    <child>force_bar_P0_link</child>
+    <sensor name='force_bar_P0_sensor' type='force_torque'>
       <always_on>true</always_on>
       <update_rate>1</update_rate>
       <visualize>true</visualize>
-      <topic>scout/force_torque_bar</topic>
+      <topic>scout/force_bar_P0</topic>
+    </sensor>
+  </joint>
+
+  <link name='force_bar_P1_link'>
+    <pose relative_to="chassis">0.5 0.14 -0.025 1.57079 0 0</pose>
+    <inertial auto="true">
+      <mass>1</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <box>
+          <size>0.005 0.15 0.13</size>
+        </box>
+      </geometry>
+      <material>
+        <ambient>1.0 0.0 0.0 1</ambient>
+        <diffuse>1.0 0.0 0.0 1</diffuse>
+        <specular>1.0 0.0 0.0 1</specular>
+      </material>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <box>
+          <size>0.005 0.15 0.13</size>
+        </box>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='force_bar_P1_joint' type='fixed'>
+    <pose relative_to='force_bar_P1_link'/>
+    <parent>chassis</parent>
+    <child>force_bar_P1_link</child>
+    <sensor name='force_bar_P1_sensor' type='force_torque'>
+      <always_on>true</always_on>
+      <update_rate>1</update_rate>
+      <visualize>true</visualize>
+      <topic>scout/force_bar_P1</topic>
+    </sensor>
+  </joint>
+
+  <link name='force_bar_P2_link'>
+    <pose relative_to="chassis">0.5 0 -0.025 1.57079 0 0</pose>
+    <inertial auto="true">
+      <mass>1</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <box>
+          <size>0.005 0.15 0.13</size>
+        </box>
+      </geometry>
+      <material>
+        <ambient>1.0 0.0 0.0 1</ambient>
+        <diffuse>1.0 0.0 0.0 1</diffuse>
+        <specular>1.0 0.0 0.0 1</specular>
+      </material>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <box>
+          <size>0.005 0.15 0.13</size>
+        </box>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='force_bar_P2_joint' type='fixed'>
+    <pose relative_to='force_bar_P2_link'/>
+    <parent>chassis</parent>
+    <child>force_bar_P2_link</child>
+    <sensor name='force_bar_P2_sensor' type='force_torque'>
+      <always_on>true</always_on>
+      <update_rate>1</update_rate>
+      <visualize>true</visualize>
+      <topic>scout/force_bar_P2</topic>
+    </sensor>
+  </joint>
+
+  <link name='force_bar_P3_link'>
+    <pose relative_to="chassis">0.5 -0.14 -0.025 1.57079 0 0</pose>
+    <inertial auto="true">
+      <mass>1</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <box>
+          <size>0.005 0.15 0.13</size>
+        </box>
+      </geometry>
+      <material>
+        <ambient>1.0 0.0 0.0 1</ambient>
+        <diffuse>1.0 0.0 0.0 1</diffuse>
+        <specular>1.0 0.0 0.0 1</specular>
+      </material>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <box>
+          <size>0.005 0.15 0.13</size>
+        </box>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='force_bar_P3_joint' type='fixed'>
+    <pose relative_to='force_bar_P3_link'/>
+    <parent>chassis</parent>
+    <child>force_bar_P3_link</child>
+    <sensor name='force_bar_P3_sensor' type='force_torque'>
+      <always_on>true</always_on>
+      <update_rate>1</update_rate>
+      <visualize>true</visualize>
+      <topic>scout/force_bar_P3</topic>
+    </sensor>
+  </joint>
+
+  <link name='force_bar_P4_link'>
+    <pose relative_to="chassis">0.466 -0.28 -0.025 1.57079 0 -0.43633</pose>
+    <inertial auto="true">
+      <mass>1</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <box>
+          <size>0.005 0.15 0.14</size>
+        </box>
+      </geometry>
+      <material>
+        <ambient>1.0 0.0 0.0 1</ambient>
+        <diffuse>1.0 0.0 0.0 1</diffuse>
+        <specular>1.0 0.0 0.0 1</specular>
+      </material>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <box>
+          <size>0.005 0.15 0.14</size>
+        </box>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='force_bar_P4_joint' type='fixed'>
+    <pose relative_to='force_bar_P4_link'/>
+    <parent>chassis</parent>
+    <child>force_bar_P4_link</child>
+    <sensor name='force_bar_P4_sensor' type='force_torque'>
+      <always_on>true</always_on>
+      <update_rate>1</update_rate>
+      <visualize>true</visualize>
+      <topic>scout/force_bar_P4</topic>
     </sensor>
   </joint>
 

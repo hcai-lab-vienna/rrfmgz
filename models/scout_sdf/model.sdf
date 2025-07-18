@@ -78,7 +78,7 @@
       <always_on>true</always_on>
       <update_rate>1</update_rate>
       <visualize>true</visualize>
-      <topic>scout/force_bar_P0</topic>
+      <topic>/scout/force_bar/segment_0</topic>
     </sensor>
   </joint>
 
@@ -115,7 +115,7 @@
       <always_on>true</always_on>
       <update_rate>1</update_rate>
       <visualize>true</visualize>
-      <topic>scout/force_bar_P1</topic>
+      <topic>scout/force_bar/segment_1</topic>
     </sensor>
   </joint>
 
@@ -152,7 +152,7 @@
       <always_on>true</always_on>
       <update_rate>1</update_rate>
       <visualize>true</visualize>
-      <topic>scout/force_bar_P2</topic>
+      <topic>scout/force_bar/segment_2</topic>
     </sensor>
   </joint>
 
@@ -189,7 +189,7 @@
       <always_on>true</always_on>
       <update_rate>1</update_rate>
       <visualize>true</visualize>
-      <topic>scout/force_bar_P3</topic>
+      <topic>scout/force_bar/segment_3</topic>
     </sensor>
   </joint>
 
@@ -226,7 +226,7 @@
       <always_on>true</always_on>
       <update_rate>1</update_rate>
       <visualize>true</visualize>
-      <topic>scout/force_bar_P4</topic>
+      <topic>scout/force_bar/segment_4</topic>
     </sensor>
   </joint>
 

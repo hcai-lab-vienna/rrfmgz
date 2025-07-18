@@ -22,9 +22,10 @@ from std_msgs.msg import String
 
 
 class ForceBarSubPub(Node):
+    """merge force bar segment topcis into a single topic"""
 
     def __init__(self, sn:int, *, ft:str='f', xyz:str='x',
-                 echo:bool=False, dt:float=1.0, p:int=5):
+                 echo:bool=False, dt:float=1.0, p:int=3):
         """
         sn.... segment number (mendatory)
         ft.... force 'f' or torque 't' sel. for merged pub
@@ -41,11 +42,12 @@ class ForceBarSubPub(Node):
         self.dt = dt
         self.p = p
         self.val = 0.0
+        self.pub_topic = f"/scout/force_bar/joined_{'force' if ft == 'f' else 'torque'}_{xyz}"
         self.subscription = self.create_subscription(
             Wrench, f'/scout/force_bar/segment_{self.sn}',
             self.listener_callback, 10)
         self.publisher = self.create_publisher(
-            String, '/scout/force_bar/joined_force_x', 10)
+            String, self.pub_topic, 10)
         self.timer = self.create_timer(
             self.dt, self.timer_callback)
 
@@ -77,7 +79,7 @@ class ForceBarSubPub(Node):
 
     def timer_callback(self):
         msg = String()
-        msg.data = f"{self.sn},{self.ft},{self.xyz},{self.val}"
+        msg.data = f"{self.sn} {self.val}"
         self.publisher.publish(msg)
         if self.echo:
             self.get_logger().info(msg.data)

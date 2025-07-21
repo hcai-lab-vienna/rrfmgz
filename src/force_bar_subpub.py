@@ -24,72 +24,67 @@ from std_msgs.msg import String
 class ForceBarSubPub(Node):
     """merge force bar segment topcis into a single topic"""
 
-    def __init__(self, sn:int, *, ft:str='f', xyz:str='x',
-                 echo:bool=False, dt:float=1.0, p:int=3):
+    def __init__(self, sn:int, dt:float, *, ft:str='f', xyz:str='x'):
         """
         sn.... segment number (mendatory)
+        dt.... timer interval (mendatory)
         ft.... force 'f' or torque 't' sel. for merged pub
         xyz... 'x', 'y' or 'z' selection for merged pub
-        echo.. print logging to stdout
-        dt.... timer interval
-        p..... precision
         """
         super().__init__(f'force_bar_segment_{sn}_subpub')
         self.sn = sn
+        self.dt = dt
         self.ft = ft
         self.xyz = xyz
-        self.echo = echo
-        self.dt = dt
-        self.p = p
         self.val = 0.0
-        self.pub_topic = f"/scout/force_bar/joined_{'force' if ft == 'f' else 'torque'}_{xyz}"
         self.subscription = self.create_subscription(
-            Wrench, f'/scout/force_bar/segment_{self.sn}',
-            self.listener_callback, 10)
+            Wrench,
+            f'/scout/force_bar/segment_{self.sn}',
+            self.listener_callback,
+            10)
+        self.pub_topic = f"/scout/force_bar/joined_{'torque' if ft == 't' else 'force'}_{xyz}"
         self.publisher = self.create_publisher(
-            String, self.pub_topic, 10)
+            String,
+            self.pub_topic,
+            10)
         self.timer = self.create_timer(
-            self.dt, self.timer_callback)
+            self.dt,
+            self.timer_callback)
 
     def listener_callback(self, msg):
         if self.ft == 'f':
             if self.xyz == 'x':
-                self.val = round(msg.force.x, self.p)
+                self.val = msg.force.x
             if self.xyz == 'y':
-                self.val = round(msg.force.y, self.p)
+                self.val = msg.force.y
             if self.xyz == 'z':
-                self.val = round(msg.force.z, self.p)
+                self.val = msg.force.z
         if self.ft == 't':
             if self.xyz == 'x':
-                self.val = round(msg.torque.x, self.p)
+                self.val = msg.torque.x
             if self.xyz == 'y':
-                self.val = round(msg.torque.y, self.p)
+                self.val = msg.torque.y
             if self.xyz == 'z':
-                self.val = round(msg.torque.z, self.p)
-        if self.echo:
-            self.get_logger().info(f"""
-    force:
-        x: {msg.force.x}
-        y: {msg.force.y}
-        z: {msg.force.z}
-    torque:
-        x: {msg.torque.x}
-        y: {msg.torque.y}
-        z: {msg.torque.z}""")
+                self.val = msg.torque.z
 
     def timer_callback(self):
         msg = String()
         msg.data = f"{self.sn} {self.val}"
         self.publisher.publish(msg)
-        if self.echo:
-            self.get_logger().info(msg.data)
+#-LOG-BLOCK-START---------------------------------------------------------------#
+        self.get_logger().info(f"""
+    publishing:
+        topic: {self.pub_topic}
+        sensor_n: {self.sn:4d}
+        {'torque' if self.ft == 't' else 'force'}_{self.xyz}: {self.val:8.2f}""")
+#-LOG-BLOCK-END-----------------------------------------------------------------#
 
 
 def main(args=None):
     rclpy.init(args=args)
 
     sn = int(argv[1])
-    subscriber = ForceBarSubPub(sn)
+    subscriber = ForceBarSubPub(sn, dt=0.01)
 
     rclpy.spin(subscriber)
     subscriber.destroy_node()

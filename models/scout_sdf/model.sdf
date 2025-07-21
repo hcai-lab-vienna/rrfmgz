@@ -37,7 +37,7 @@
     </collision>
     <sensor name="imu_sensor" type="imu">
       <always_on>true</always_on>
-      <update_rate>1</update_rate>
+      <update_rate>100</update_rate>
       <visualize>true</visualize>
       <topic>scout/imu</topic>
     </sensor>
@@ -76,7 +76,7 @@
     <child>force_bar_P0_link</child>
     <sensor name='force_bar_P0_sensor' type='force_torque'>
       <always_on>true</always_on>
-      <update_rate>1</update_rate>
+      <update_rate>100</update_rate>
       <visualize>true</visualize>
       <topic>/scout/force_bar/segment_0</topic>
     </sensor>
@@ -113,7 +113,7 @@
     <child>force_bar_P1_link</child>
     <sensor name='force_bar_P1_sensor' type='force_torque'>
       <always_on>true</always_on>
-      <update_rate>1</update_rate>
+      <update_rate>100</update_rate>
       <visualize>true</visualize>
       <topic>scout/force_bar/segment_1</topic>
     </sensor>
@@ -150,7 +150,7 @@
     <child>force_bar_P2_link</child>
     <sensor name='force_bar_P2_sensor' type='force_torque'>
       <always_on>true</always_on>
-      <update_rate>1</update_rate>
+      <update_rate>100</update_rate>
       <visualize>true</visualize>
       <topic>scout/force_bar/segment_2</topic>
     </sensor>
@@ -187,7 +187,7 @@
     <child>force_bar_P3_link</child>
     <sensor name='force_bar_P3_sensor' type='force_torque'>
       <always_on>true</always_on>
-      <update_rate>1</update_rate>
+      <update_rate>100</update_rate>
       <visualize>true</visualize>
       <topic>scout/force_bar/segment_3</topic>
     </sensor>
@@ -224,7 +224,7 @@
     <child>force_bar_P4_link</child>
     <sensor name='force_bar_P4_sensor' type='force_torque'>
       <always_on>true</always_on>
-      <update_rate>1</update_rate>
+      <update_rate>100</update_rate>
       <visualize>true</visualize>
       <topic>scout/force_bar/segment_4</topic>
     </sensor>

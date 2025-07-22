@@ -59,6 +59,13 @@
     </include>
   </model>
 
+  <model name="lehrforst_border">
+    <pose>0 0 -15 0 0 0</pose>
+    <static>true</static>
+    <include merge="true">
+      <uri>models/lehrforst_border</uri>
+    </include>
+  </model>
 
   <model name='scout'>
     <pose relative_to='world'>0 0 0 0 0 0</pose>

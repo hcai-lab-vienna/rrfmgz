@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 
+"""Generates model.sdf for the lehrforst trees out of the provided .csv"""
+
 model_path = "models/lehrforst_trees"
 
-# limit where trees will be
-x_min = 20
-x_max = 60
-y_min = -20
-y_max = 20
+# area in which trees will be loaded
+x_min = 15
+x_max = 70
+y_min = -30
+y_max = 30
 
 # unse only every X trees (1 for all)
 use_trees = 1
 
 # use only trees with diamater X (cm) or larger (0 for all)
-min_diam = 4#cm
+min_diam = 7#cm
 
 # individual tree rotation (radiant)
 tree_rotation = 3.14159

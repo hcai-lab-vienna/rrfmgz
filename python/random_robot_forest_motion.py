@@ -56,13 +56,13 @@ class RandomRobotForestMotion(Node):
         cc = val < -300  # collision condition
         if cc:
             self.cf = 7 * self.fps
-        if 6*self.fps < self.cf < 7*self.fps:
+        if 6*self.fps < self.cf <= 7*self.fps:
             self.lin = -3.0
             self.ang = 0.0
-        if r*self.fps < self.cf < 6*self.fps:
+        if r*self.fps < self.cf <= 6*self.fps:
             self.lin = 0
             self.ang = 1.0
-        if 1*self.fps < self.cf < r*self.fps:
+        if 1*self.fps < self.cf <= r*self.fps:
             self.lin = 3.0
             self.ang = 0
         if cc:

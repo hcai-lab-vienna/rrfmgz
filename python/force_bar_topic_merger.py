@@ -29,22 +29,22 @@ class ForceBarTopicMerger(Node):
         sn.... segment number
         dt.... timer interval
         """
-        super().__init__(f'force_bar_segment_{sn}_merger')
+        super().__init__(f'force_bar_topic_merger_{sn}')
         self.sn = sn
         self.dt = dt
         self.val = 0.0
         self.subscription = self.create_subscription(
-            Wrench,
-            f'/scout/force_bar/segment_{self.sn}',
-            self.listener_callback,
-            10)
+            msg_type=Wrench,
+            topic=f'/scout/force_bar/segment_{self.sn}',
+            callback=self.listener_callback,
+            qos_profile=10)
         self.publisher = self.create_publisher(
-            String,
-            "/scout/force_bar/joined_force_x",
-            10)
+            msg_type=String,
+            topic="/merged_force_topic",
+            qos_profile=10)
         self.timer = self.create_timer(
-            self.dt,
-            self.timer_callback)
+            timer_period_sec=self.dt,
+            callback=self.timer_callback)
 
     def listener_callback(self, msg):
         self.val = msg.force.x

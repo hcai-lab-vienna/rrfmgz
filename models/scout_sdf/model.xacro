@@ -1,0 +1,185 @@
+<?xml version="1.0" ?>
+<sdf version="1.10" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<model name='scout' canonical_link='chassis'>
+
+  <xacro:property name="update_rate" value="10"/>
+  <xacro:property name="linear_speed" value="1.0"/>
+  <xacro:property name="angular_speed" value="0.5"/>
+
+  <!-- base_link -->
+
+  <link name='chassis'>
+    <pose relative_to='__model__'>0 0 1 0 0 0</pose>
+    <inertial auto="true">
+      <mass>50</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <mesh><uri>meshes/scout_base.dae</uri></mesh>
+      </geometry>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <box>
+          <size>0.93 0.42 0.19</size>
+        </box>
+      </geometry>
+    </collision>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>${update_rate}</update_rate>
+      <visualize>true</visualize>
+      <topic>scout/imu</topic>
+    </sensor>
+  </link>
+
+  <!-- wheels -->
+
+  <xacro:property name="wheel_radius" value="0.16"/>
+  <xacro:property name="wheel_width" value="0.11"/>
+  <xacro:property name="wheel_distance" value="0.29153"/>
+
+  <xacro:macro name="wheel" params="N T X Y Z r p y">
+    <link name='${N}_wheel'>
+      <pose relative_to="chassis">${X} ${Y} ${Z} ${r} ${p} ${y}</pose>
+      <inertial auto="true">
+        <mass>8</mass>
+      </inertial>
+      <visual name='visual'>
+        <geometry>
+          <mesh><uri>meshes/wheel_type${T}.dae</uri></mesh>
+        </geometry>
+      </visual>
+      <collision name='collision'>
+        <pose relative_to="chassis">${X} ${Y} ${Z} ${((pi/2)-r)} ${p} ${y}</pose>
+        <geometry>
+          <cylinder>
+            <radius>${wheel_radius}</radius>
+            <length>${wheel_width}</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+    <joint name='${N}_wheel_joint' type='revolute'>
+      <pose relative_to='${N}_wheel'/>
+      <parent>chassis</parent>
+      <child>${N}_wheel</child>
+      <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+      </axis>
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel N='front_left'  T='2' X='0.249'  Y='${wheel_distance}'    Z='-0.0702' r='0.0'   p='0.0' y='0.0'/>
+  <xacro:wheel N='front_right' T='1' X='0.249'  Y='${(-wheel_distance)}' Z='-0.0702' r='${pi}' p='0.0' y='0.0'/>
+  <xacro:wheel N='back_left'   T='1' X='-0.249' Y='${wheel_distance}'    Z='-0.0702' r='0.0'   p='0.0' y='0.0'/>
+  <xacro:wheel N='back_right'  T='2' X='-0.249' Y='${(-wheel_distance)}' Z='-0.0702' r='${pi}' p='0.0' y='0.0'/>
+
+  <!-- sensor bar -->
+
+  <xacro:macro name="force_bar_segment" params="P X Y Z r p y L W H">
+    <link name='force_bar_P${P}_link'>
+      <pose relative_to="chassis">${X} ${Y} ${Z} ${r} ${p} ${y}</pose>
+      <inertial auto="true">
+        <mass>1</mass>
+      </inertial>
+      <visual name='visual'>
+        <geometry>
+          <box>
+            <size>${L} ${W} ${H}</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>1.0 0.0 0.0 1</ambient>
+          <diffuse>1.0 0.0 0.0 1</diffuse>
+          <specular>1.0 0.0 0.0 1</specular>
+        </material>
+      </visual>
+      <collision name='collision'>
+        <geometry>
+          <box>
+            <size>${L} ${W} ${H}</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+    <joint name='force_bar_P${P}_joint' type='fixed'>
+      <pose relative_to='force_bar_P${P}_link'/>
+      <parent>chassis</parent>
+      <child>force_bar_P${P}_link</child>
+      <sensor name='force_bar_P${P}_sensor' type='force_torque'>
+        <always_on>true</always_on>
+        <update_rate>${update_rate}</update_rate>
+        <visualize>true</visualize>
+        <topic>/scout/force_bar/segment_${P}</topic>
+      </sensor>
+    </joint>
+  </xacro:macro>
+
+  <xacro:force_bar_segment P='0' X='0.466' Y='0.28'  Z='-0.025' r='${pi/2}' p='0.0' y='0.43633'  L='0.005' W='0.15' H='0.14'/>
+  <xacro:force_bar_segment P='1' X='0.5'   Y='0.14'  Z='-0.025' r='${pi/2}' p='0.0' y='0.0'      L='0.005' W='0.15' H='0.13'/>
+  <xacro:force_bar_segment P='2' X='0.5'   Y='0.0'   Z='-0.025' r='${pi/2}' p='0.0' y='0.0'      L='0.005' W='0.15' H='0.13'/>
+  <xacro:force_bar_segment P='3' X='0.5'   Y='-0.14' Z='-0.025' r='${pi/2}' p='0.0' y='0.0'      L='0.005' W='0.15' H='0.13'/>
+  <xacro:force_bar_segment P='4' X='0.466' Y='-0.28' Z='-0.025' r='${pi/2}' p='0.0' y='-0.43633' L='0.005' W='0.15' H='0.14'/>
+
+  <!-- plugins -->
+
+  <plugin
+    filename="gz-sim-mecanum-drive-system"
+    name="gz::sim::systems::MecanumDrive">
+    <front_left_joint>front_left_wheel_joint</front_left_joint>
+    <front_right_joint>front_right_wheel_joint</front_right_joint>
+    <back_left_joint>back_left_wheel_joint</back_left_joint>
+    <back_right_joint>back_right_wheel_joint</back_right_joint>
+    <wheel_separation>${(wheel_distance*2)}</wheel_separation>
+    <wheel_radius>${wheel_radius}</wheel_radius>
+    <odom_publish_frequency>${update_rate}</odom_publish_frequency>
+    <topic>cmd_vel</topic>
+  </plugin>
+
+  <xacro:macro name="keymap" params="D L A">
+    <plugin
+      filename="gz-sim-triggered-publisher-system"
+      name="gz::sim::systems::TriggeredPublisher">
+      <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+        <match field="data">${D}</match>
+      </input>
+      <output type="gz.msgs.Twist" topic="/cmd_vel">
+        linear: {x: ${L}}, angular: {z: ${A}}
+      </output>
+    </plugin>
+  </xacro:macro>
+  <!-- FrontArrowKey: drive frontward -->
+  <xacro:keymap D='16777235' L='${linear_speed}'    A='0.0'/>
+  <!-- BackArrowKey: drive backward -->
+  <xacro:keymap D='16777237' L='${(-linear_speed)}' A='0.0'/>
+  <!-- LeftArrowKey: turn left -->
+  <xacro:keymap D='16777234' L='0.0'                A='${angular_speed}'/>
+  <!-- RightArrowKey: turn right -->
+  <xacro:keymap D='16777236' L='0.0'                A='${(-angular_speed)}'/>
+  <!-- s: stop -->
+  <xacro:keymap D='83'       L='0.0'                A='0.0'/>
+
+  <plugin
+    filename="gz-sim-pose-publisher-system"
+    name="gz::sim::systems::PosePublisher">
+    <publish_link_pose>False</publish_link_pose>
+    <publish_visual_pose>False</publish_visual_pose>
+    <publish_collision_pose>False</publish_collision_pose>
+    <publish_sensor_pose>False</publish_sensor_pose>
+    <publish_model_pose>True</publish_model_pose>
+    <publish_nested_model_pose>True</publish_nested_model_pose>
+    <use_pose_vector_msg>False</use_pose_vector_msg>
+    <update_frequency>${update_rate}</update_frequency>
+    <static_publisher>False</static_publisher>
+    <static_update_frequency>${update_rate}</static_update_frequency>
+  </plugin>
+
+</model>
+
+</sdf>

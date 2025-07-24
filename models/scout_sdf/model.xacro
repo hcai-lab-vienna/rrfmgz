@@ -3,8 +3,8 @@
 
 <model name='scout' canonical_link='chassis'>
 
-  <xacro:property name="update_rate" value="10"/>
-  <xacro:property name="linear_speed" value="1.0"/>
+  <xacro:property name="update_rate"   value="10"/>
+  <xacro:property name="linear_speed"  value="1.0"/>
   <xacro:property name="angular_speed" value="0.5"/>
 
   <!-- base_link -->
@@ -36,9 +36,10 @@
 
   <!-- wheels -->
 
-  <xacro:property name="wheel_radius" value="0.16"/>
-  <xacro:property name="wheel_width" value="0.11"/>
-  <xacro:property name="wheel_distance" value="0.29153"/>
+  <xacro:property name="wheel_radius"     value="0.16"/>
+  <xacro:property name="wheel_width"      value="0.11"/>
+  <xacro:property name="wheel_base"       value="0.498"/>
+  <xacro:property name="wheel_separation" value="0.58306"/>
 
   <xacro:macro name="wheel" params="N T X Y Z r p y">
     <link name='${N}_wheel'>
@@ -75,10 +76,10 @@
     </joint>
   </xacro:macro>
 
-  <xacro:wheel N='front_left'  T='2' X='0.249'  Y='${wheel_distance}'    Z='-0.0702' r='0.0'   p='0.0' y='0.0'/>
-  <xacro:wheel N='front_right' T='1' X='0.249'  Y='${(-wheel_distance)}' Z='-0.0702' r='${pi}' p='0.0' y='0.0'/>
-  <xacro:wheel N='back_left'   T='1' X='-0.249' Y='${wheel_distance}'    Z='-0.0702' r='0.0'   p='0.0' y='0.0'/>
-  <xacro:wheel N='back_right'  T='2' X='-0.249' Y='${(-wheel_distance)}' Z='-0.0702' r='${pi}' p='0.0' y='0.0'/>
+  <xacro:wheel N='front_left'  T='2' X='${(wheel_base/2)}'  Y='${(wheel_separation/2)}'  Z='-0.0702' r='0.0'   p='0.0' y='0.0'/>
+  <xacro:wheel N='front_right' T='1' X='${(wheel_base/2)}'  Y='${(-wheel_separation/2)}' Z='-0.0702' r='${pi}' p='0.0' y='0.0'/>
+  <xacro:wheel N='back_left'   T='1' X='${(-wheel_base/2)}' Y='${(wheel_separation/2)}'  Z='-0.0702' r='0.0'   p='0.0' y='0.0'/>
+  <xacro:wheel N='back_right'  T='2' X='${(-wheel_base/2)}' Y='${(-wheel_separation/2)}' Z='-0.0702' r='${pi}' p='0.0' y='0.0'/>
 
   <!-- sensor bar -->
 
@@ -136,9 +137,10 @@
     <front_right_joint>front_right_wheel_joint</front_right_joint>
     <back_left_joint>back_left_wheel_joint</back_left_joint>
     <back_right_joint>back_right_wheel_joint</back_right_joint>
-    <wheel_separation>${(wheel_distance*2)}</wheel_separation>
+    <wheelbase>${wheel_base}</wheelbase>
+    <wheel_separation>${wheel_separation}</wheel_separation>
     <wheel_radius>${wheel_radius}</wheel_radius>
-    <odom_publish_frequency>${update_rate}</odom_publish_frequency>
+    <odom_publish_frequency>1</odom_publish_frequency>
     <topic>cmd_vel</topic>
   </plugin>
 
@@ -178,6 +180,16 @@
     <update_frequency>${update_rate}</update_frequency>
     <static_publisher>False</static_publisher>
     <static_update_frequency>${update_rate}</static_update_frequency>
+  </plugin>
+
+  <plugin
+    filename="gz-sim-imu-system"
+    name="gz::sim::systems::Imu">
+  </plugin>
+
+  <plugin
+    filename="gz-sim-forcetorque-system"
+    name="gz::sim::systems::ForceTorque">
   </plugin>
 
 </model>

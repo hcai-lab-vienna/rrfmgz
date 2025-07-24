@@ -26,12 +26,12 @@ from std_msgs.msg import String
 
 class RandomRobotForestMotion(Node):
 
-    def __init__(self, dt:float):
+    def __init__(self, hz:float):
         """
         dt.... timer interval
         """
         super().__init__('random_robot_forest_motion')
-        self.dt = dt
+        self.dt = 1.0/float(hz)
         # fps in combination with frames required to make logic
         # independent of physics calculation frame rate
         self.fps:float = float(1/self.dt)
@@ -49,13 +49,13 @@ class RandomRobotForestMotion(Node):
             topic='/cmd_vel',
             qos_profile=10)
         self.timer = self.create_timer(
-            timer_period_sec=dt,
+            timer_period_sec=self.dt,
             callback=self.timer_callback)
 
     def calculate_movement(self, sn:int, val:float):
         self.collision = val < -300  # collision condition
-        lin_speed:float = 3.0
-        ang_speed:float = 1.0
+        lin_speed:float = 1.0
+        ang_speed:float = 0.5
         td:float = 7.0  # total duration
         bd:float = 1.0  # backwards drive duration
         rd:float = random.uniform(2.0, td-bd-1.0)  # rotation duration
@@ -98,7 +98,7 @@ class RandomRobotForestMotion(Node):
 def main(args=None):
     rclpy.init(args=args)
     subscriber = RandomRobotForestMotion(
-        dt=0.01)
+        hz=10)
     rclpy.spin(subscriber)
     subscriber.destroy_node()
     rclpy.shutdown()

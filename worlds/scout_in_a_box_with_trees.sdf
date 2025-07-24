@@ -19,16 +19,6 @@
     name="gz::sim::systems::SceneBroadcaster">
   </plugin>
 
-  <plugin
-    filename="gz-sim-imu-system"
-    name="gz::sim::systems::Imu">
-  </plugin>
-
-  <plugin
-    filename="gz-sim-forcetorque-system"
-    name="gz::sim::systems::ForceTorque">
-  </plugin>
-
 
   <physics name="1ms" type="ignored">
     <max_step_size>0.001</max_step_size>

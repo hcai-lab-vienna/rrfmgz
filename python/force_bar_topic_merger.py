@@ -24,14 +24,14 @@ from std_msgs.msg import String
 class ForceBarTopicMerger(Node):
     """merge force bar segment topcis into a single topic"""
 
-    def __init__(self, sn:int, dt:float):
+    def __init__(self, sn:int, hz:float):
         """
         sn.... segment number
         dt.... timer interval
         """
         super().__init__(f'force_bar_topic_merger_{sn}')
         self.sn = sn
-        self.dt = dt
+        self.dt = 1.0/float(hz)
         self.val = 0.0
         self.subscription = self.create_subscription(
             msg_type=Wrench,
@@ -59,7 +59,7 @@ def main(args=None):
     rclpy.init(args=args)
     subscriber = ForceBarTopicMerger(
         sn=int(argv[1]),
-        dt=0.01)
+        hz=10)
     rclpy.spin(subscriber)
     subscriber.destroy_node()
     rclpy.shutdown()

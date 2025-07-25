@@ -3,9 +3,12 @@
 
 <model name='scout' canonical_link='chassis'>
 
-  <xacro:property name="update_rate"   value="10"/>
-  <xacro:property name="linear_speed"  value="1.0"/>
-  <xacro:property name="angular_speed" value="0.5"/>
+  <xacro:property name="update_rate_odom"      value="1"/>
+  <xacro:property name="update_rate_imu"       value="1"/>
+  <xacro:property name="update_rate_pose"      value="3"/>
+  <xacro:property name="update_rate_force_bar" value="100"/>
+  <xacro:property name="linear_speed"          value="1.0"/>
+  <xacro:property name="angular_speed"         value="0.5"/>
 
   <!-- base_link -->
 
@@ -28,7 +31,7 @@
     </collision>
     <sensor name="imu_sensor" type="imu">
       <always_on>true</always_on>
-      <update_rate>${update_rate}</update_rate>
+      <update_rate>${update_rate_imu}</update_rate>
       <visualize>true</visualize>
       <topic>scout/imu</topic>
     </sensor>
@@ -115,7 +118,7 @@
       <child>force_bar_P${P}_link</child>
       <sensor name='force_bar_P${P}_sensor' type='force_torque'>
         <always_on>true</always_on>
-        <update_rate>${update_rate}</update_rate>
+        <update_rate>${update_rate_force_bar}</update_rate>
         <visualize>true</visualize>
         <topic>/scout/force_bar/segment_${P}</topic>
       </sensor>
@@ -140,7 +143,7 @@
     <wheelbase>${wheel_base}</wheelbase>
     <wheel_separation>${wheel_separation}</wheel_separation>
     <wheel_radius>${wheel_radius}</wheel_radius>
-    <odom_publish_frequency>1</odom_publish_frequency>
+    <odom_publish_frequency>${update_rate_odom}</odom_publish_frequency>
     <topic>cmd_vel</topic>
   </plugin>
 
@@ -177,9 +180,9 @@
     <publish_model_pose>True</publish_model_pose>
     <publish_nested_model_pose>True</publish_nested_model_pose>
     <use_pose_vector_msg>False</use_pose_vector_msg>
-    <update_frequency>${update_rate}</update_frequency>
+    <update_frequency>${update_rate_pose}</update_frequency>
     <static_publisher>False</static_publisher>
-    <static_update_frequency>${update_rate}</static_update_frequency>
+    <static_update_frequency>${update_rate_pose}</static_update_frequency>
   </plugin>
 
   <plugin

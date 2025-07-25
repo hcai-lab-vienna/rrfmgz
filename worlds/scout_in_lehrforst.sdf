@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <sdf version="1.10">
 
-  <world name="scout_in_lehrforst">
+<world name="scout_in_lehrforst">
 
 
   <plugin

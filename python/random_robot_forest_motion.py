@@ -13,11 +13,13 @@
 # limitations under the License.
 
 import random
+from datetime import datetime
 
 import rclpy
 from rclpy.node import Node
 
-from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Imu
+from geometry_msgs.msg import Twist, Pose
 from std_msgs.msg import String
 
 
@@ -39,12 +41,17 @@ class RandomRobotForestMotion(Node):
         self.linear:float = 0.0
         self.angular:float = 0.0
         self.collision:bool = False
-        self.subscription = self.create_subscription(
+        self.merged_force_topic_sub = self.create_subscription(
             msg_type=String,
             topic="/merged_force_topic",
-            callback=self.listener_callback,
+            callback=self.merged_force_topic_callback,
             qos_profile=10)
-        self.publisher = self.create_publisher(
+        self.pose_sub = self.create_subscription(
+            msg_type=Pose,
+            topic="/scout/pose",
+            callback=self.pose_sub_callback,
+            qos_profile=10)
+        self.cmd_vel_pub = self.create_publisher(
             msg_type=Twist,
             topic='/cmd_vel',
             qos_profile=10)
@@ -76,21 +83,30 @@ class RandomRobotForestMotion(Node):
             self.linear = 1.0 * lin_speed
             self.angular = 0.0 * ang_speed
 
-    def listener_callback(self, msg):
+    def merged_force_topic_callback(self, msg):
         sn, val = msg.data.split(' ')
         sn = int(sn)
         val = float(val)
         self.calculate_movement(sn, val)
         if self.collision:
             self.get_logger().info(f"COL sn:{sn} val:{val:.2f}")
+    
+    def pose_sub_callback(self, msg):
+        x = msg.position.x
+        y = msg.position.y
+        # z = msg.position.z
+        # now = datetime.now().strftime('%Y%m%d%H%M:%S%f')
+        # with open(f'data/recored_positions_{now}.csv', 'w') as f:
+        with open(f'data/recored_positions.csv', 'a') as f:
+            f.write(f"{x},{y},{int(bool(self.frames))}\n")
 
     def timer_callback(self):
-        msg = Twist()
         if self.frames:
             self.frames -= 1
+            msg = Twist()
             msg.linear.x = float(self.linear)
             msg.angular.z = float(self.angular)
-            self.publisher.publish(msg)
+            self.cmd_vel_pub.publish(msg)
             if self.frames % self.fps == 0:
                 self.get_logger().info(f"MOV lin:{self.linear:.1f} ang:{self.angular:.1f}")
 

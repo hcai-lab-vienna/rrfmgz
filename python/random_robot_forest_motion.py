@@ -28,7 +28,7 @@ from std_msgs.msg import String
 
 class RandomRobotForestMotion(Node):
 
-    def __init__(self, hz:float):
+    def __init__(self, collision_force:float, hz:float, qos_profile:int=10):
         """
         dt.... timer interval
         """
@@ -38,6 +38,7 @@ class RandomRobotForestMotion(Node):
         # independent of physics calculation frame rate
         self.fps:float = float(1/self.dt)
         self.frames:int = 0
+        self.cf:float = abs(collision_force)
         self.linear:float = 0.0
         self.angular:float = 0.0
         self.collision:bool = False
@@ -45,43 +46,43 @@ class RandomRobotForestMotion(Node):
             msg_type=String,
             topic="/merged_force_topic",
             callback=self.merged_force_topic_callback,
-            qos_profile=10)
+            qos_profile=qos_profile)
         self.pose_sub = self.create_subscription(
             msg_type=Pose,
             topic="/scout/pose",
             callback=self.pose_sub_callback,
-            qos_profile=10)
+            qos_profile=qos_profile)
         self.cmd_vel_pub = self.create_publisher(
             msg_type=Twist,
             topic='/cmd_vel',
-            qos_profile=10)
+            qos_profile=qos_profile)
         self.timer = self.create_timer(
             timer_period_sec=self.dt,
             callback=self.timer_callback)
 
     def calculate_movement(self, sn:int, val:float):
-        self.collision = val < -300  # collision condition
-        lin_speed:float = 1.0
+        self.collision = abs(val) >= self.cf  # collision condition
+        lin_speed:float = 0.5
         ang_speed:float = 0.5
         td:float = 7.0  # total duration
-        bd:float = 1.0  # backwards drive duration
+        bd:float = 1.5  # backwards drive duration
         rd:float = random.uniform(2.0, td-bd-1.0)  # rotation duration
         if self.collision:
             self.frames = int(td * self.fps) + 1
         if (td-bd)*self.fps < self.frames <= td*self.fps:
-            self.linear = -1.0 * lin_speed
-            self.angular = 0.0 * ang_speed
+            self.linear = -lin_speed
+            self.angular = 0.0
         elif self.angular == 0:  # only set angular direction once per collision
             if sn == 3:
                 ang_speed = random.choice([1.0, -1.0]) * ang_speed
             elif 3 < sn:
-                ang_speed = -1.0 * ang_speed
+                ang_speed = -ang_speed
         if rd*self.fps < self.frames <= (td-bd)*self.fps:
-            self.linear = 0.0 * lin_speed
-            self.angular = 1.0 * ang_speed
+            self.linear = 0.0
+            self.angular = ang_speed
         if 0.0 < self.frames <= rd*self.fps:
-            self.linear = 1.0 * lin_speed
-            self.angular = 0.0 * ang_speed
+            self.linear = lin_speed
+            self.angular = 0.0
 
     def merged_force_topic_callback(self, msg):
         sn, val = msg.data.split(' ')
@@ -114,7 +115,8 @@ class RandomRobotForestMotion(Node):
 def main(args=None):
     rclpy.init(args=args)
     subscriber = RandomRobotForestMotion(
-        hz=10)
+        collision_force=100,
+        hz=1000)
     rclpy.spin(subscriber)
     subscriber.destroy_node()
     rclpy.shutdown()

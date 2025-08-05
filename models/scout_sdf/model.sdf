@@ -171,7 +171,7 @@
     </joint>
     <!-- sensor bar -->
     <link name="force_bar_P0_link">
-      <pose relative_to="chassis">0.466 0.28 -0.025 1.5707963267948966 0.0 0.43633</pose>
+      <pose relative_to="chassis">0.466 0.28 0.0 1.5707963267948966 0.0 0.43633</pose>
       <inertial auto="true">
         <mass>1</mass>
       </inertial>
@@ -182,9 +182,9 @@
           </box>
         </geometry>
         <material>
-          <ambient>1.0 0.0 0.0 1</ambient>
-          <diffuse>1.0 0.0 0.0 1</diffuse>
-          <specular>1.0 0.0 0.0 1</specular>
+          <ambient>0.5 0.5 0.5 0.5</ambient>
+          <diffuse>0.5 0.5 0.5 0.5</diffuse>
+          <specular>0.5 0.5 0.5 0.5</specular>
         </material>
       </visual>
       <collision name="collision">
@@ -201,13 +201,13 @@
       <child>force_bar_P0_link</child>
       <sensor name="force_bar_P0_sensor" type="force_torque">
         <always_on>true</always_on>
-        <update_rate>100</update_rate>
+        <update_rate>1000</update_rate>
         <visualize>true</visualize>
         <topic>/scout/force_bar/segment_0</topic>
       </sensor>
     </joint>
     <link name="force_bar_P1_link">
-      <pose relative_to="chassis">0.5 0.14 -0.025 1.5707963267948966 0.0 0.0</pose>
+      <pose relative_to="chassis">0.5 0.14 0.0 1.5707963267948966 0.0 0.0</pose>
       <inertial auto="true">
         <mass>1</mass>
       </inertial>
@@ -218,9 +218,9 @@
           </box>
         </geometry>
         <material>
-          <ambient>1.0 0.0 0.0 1</ambient>
-          <diffuse>1.0 0.0 0.0 1</diffuse>
-          <specular>1.0 0.0 0.0 1</specular>
+          <ambient>0.5 0.5 0.5 0.5</ambient>
+          <diffuse>0.5 0.5 0.5 0.5</diffuse>
+          <specular>0.5 0.5 0.5 0.5</specular>
         </material>
       </visual>
       <collision name="collision">
@@ -237,13 +237,13 @@
       <child>force_bar_P1_link</child>
       <sensor name="force_bar_P1_sensor" type="force_torque">
         <always_on>true</always_on>
-        <update_rate>100</update_rate>
+        <update_rate>1000</update_rate>
         <visualize>true</visualize>
         <topic>/scout/force_bar/segment_1</topic>
       </sensor>
     </joint>
     <link name="force_bar_P2_link">
-      <pose relative_to="chassis">0.5 0.0 -0.025 1.5707963267948966 0.0 0.0</pose>
+      <pose relative_to="chassis">0.5 0.0 0.0 1.5707963267948966 0.0 0.0</pose>
       <inertial auto="true">
         <mass>1</mass>
       </inertial>
@@ -254,9 +254,9 @@
           </box>
         </geometry>
         <material>
-          <ambient>1.0 0.0 0.0 1</ambient>
-          <diffuse>1.0 0.0 0.0 1</diffuse>
-          <specular>1.0 0.0 0.0 1</specular>
+          <ambient>0.5 0.5 0.5 0.5</ambient>
+          <diffuse>0.5 0.5 0.5 0.5</diffuse>
+          <specular>0.5 0.5 0.5 0.5</specular>
         </material>
       </visual>
       <collision name="collision">
@@ -273,13 +273,13 @@
       <child>force_bar_P2_link</child>
       <sensor name="force_bar_P2_sensor" type="force_torque">
         <always_on>true</always_on>
-        <update_rate>100</update_rate>
+        <update_rate>1000</update_rate>
         <visualize>true</visualize>
         <topic>/scout/force_bar/segment_2</topic>
       </sensor>
     </joint>
     <link name="force_bar_P3_link">
-      <pose relative_to="chassis">0.5 -0.14 -0.025 1.5707963267948966 0.0 0.0</pose>
+      <pose relative_to="chassis">0.5 -0.14 0.0 1.5707963267948966 0.0 0.0</pose>
       <inertial auto="true">
         <mass>1</mass>
       </inertial>
@@ -290,9 +290,9 @@
           </box>
         </geometry>
         <material>
-          <ambient>1.0 0.0 0.0 1</ambient>
-          <diffuse>1.0 0.0 0.0 1</diffuse>
-          <specular>1.0 0.0 0.0 1</specular>
+          <ambient>0.5 0.5 0.5 0.5</ambient>
+          <diffuse>0.5 0.5 0.5 0.5</diffuse>
+          <specular>0.5 0.5 0.5 0.5</specular>
         </material>
       </visual>
       <collision name="collision">
@@ -309,13 +309,13 @@
       <child>force_bar_P3_link</child>
       <sensor name="force_bar_P3_sensor" type="force_torque">
         <always_on>true</always_on>
-        <update_rate>100</update_rate>
+        <update_rate>1000</update_rate>
         <visualize>true</visualize>
         <topic>/scout/force_bar/segment_3</topic>
       </sensor>
     </joint>
     <link name="force_bar_P4_link">
-      <pose relative_to="chassis">0.466 -0.28 -0.025 1.5707963267948966 0.0 -0.43633</pose>
+      <pose relative_to="chassis">0.466 -0.28 0.0 1.5707963267948966 0.0 -0.43633</pose>
       <inertial auto="true">
         <mass>1</mass>
       </inertial>
@@ -326,9 +326,9 @@
           </box>
         </geometry>
         <material>
-          <ambient>1.0 0.0 0.0 1</ambient>
-          <diffuse>1.0 0.0 0.0 1</diffuse>
-          <specular>1.0 0.0 0.0 1</specular>
+          <ambient>0.5 0.5 0.5 0.5</ambient>
+          <diffuse>0.5 0.5 0.5 0.5</diffuse>
+          <specular>0.5 0.5 0.5 0.5</specular>
         </material>
       </visual>
       <collision name="collision">
@@ -345,7 +345,7 @@
       <child>force_bar_P4_link</child>
       <sensor name="force_bar_P4_sensor" type="force_torque">
         <always_on>true</always_on>
-        <update_rate>100</update_rate>
+        <update_rate>1000</update_rate>
         <visualize>true</visualize>
         <topic>/scout/force_bar/segment_4</topic>
       </sensor>
@@ -367,7 +367,7 @@
         <match field="data">16777235</match>
       </input>
       <output topic="/cmd_vel" type="gz.msgs.Twist">
-        linear: {x: 1.0}, angular: {z: 0.0}
+        linear: {x: 0.5}, angular: {z: 0.0}
       </output>
     </plugin>
     <plugin filename="gz-sim-triggered-publisher-system" name="gz::sim::systems::TriggeredPublisher">
@@ -375,7 +375,7 @@
         <match field="data">16777237</match>
       </input>
       <output topic="/cmd_vel" type="gz.msgs.Twist">
-        linear: {x: -1.0}, angular: {z: 0.0}
+        linear: {x: -0.5}, angular: {z: 0.0}
       </output>
     </plugin>
     <plugin filename="gz-sim-triggered-publisher-system" name="gz::sim::systems::TriggeredPublisher">

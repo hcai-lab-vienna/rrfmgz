@@ -6,8 +6,8 @@
   <xacro:property name="update_rate_odom"      value="1"/>
   <xacro:property name="update_rate_imu"       value="1"/>
   <xacro:property name="update_rate_pose"      value="3"/>
-  <xacro:property name="update_rate_force_bar" value="100"/>
-  <xacro:property name="linear_speed"          value="1.0"/>
+  <xacro:property name="update_rate_force_bar" value="1000"/>
+  <xacro:property name="linear_speed"          value="0.5"/>
   <xacro:property name="angular_speed"         value="0.5"/>
 
   <!-- base_link -->
@@ -99,9 +99,9 @@
           </box>
         </geometry>
         <material>
-          <ambient>1.0 0.0 0.0 1</ambient>
-          <diffuse>1.0 0.0 0.0 1</diffuse>
-          <specular>1.0 0.0 0.0 1</specular>
+          <ambient>0.5 0.5 0.5 0.5</ambient>
+          <diffuse>0.5 0.5 0.5 0.5</diffuse>
+          <specular>0.5 0.5 0.5 0.5</specular>
         </material>
       </visual>
       <collision name='collision'>
@@ -125,11 +125,11 @@
     </joint>
   </xacro:macro>
 
-  <xacro:force_bar_segment P='0' X='0.466' Y='0.28'  Z='-0.025' r='${pi/2}' p='0.0' y='0.43633'  L='0.005' W='0.15' H='0.14'/>
-  <xacro:force_bar_segment P='1' X='0.5'   Y='0.14'  Z='-0.025' r='${pi/2}' p='0.0' y='0.0'      L='0.005' W='0.15' H='0.13'/>
-  <xacro:force_bar_segment P='2' X='0.5'   Y='0.0'   Z='-0.025' r='${pi/2}' p='0.0' y='0.0'      L='0.005' W='0.15' H='0.13'/>
-  <xacro:force_bar_segment P='3' X='0.5'   Y='-0.14' Z='-0.025' r='${pi/2}' p='0.0' y='0.0'      L='0.005' W='0.15' H='0.13'/>
-  <xacro:force_bar_segment P='4' X='0.466' Y='-0.28' Z='-0.025' r='${pi/2}' p='0.0' y='-0.43633' L='0.005' W='0.15' H='0.14'/>
+  <xacro:force_bar_segment P='0' X='0.466' Y='0.28'  Z='0.0' r='${pi/2}' p='0.0' y='0.43633'  L='0.005' W='0.15' H='0.14'/>
+  <xacro:force_bar_segment P='1' X='0.5'   Y='0.14'  Z='0.0' r='${pi/2}' p='0.0' y='0.0'      L='0.005' W='0.15' H='0.13'/>
+  <xacro:force_bar_segment P='2' X='0.5'   Y='0.0'   Z='0.0' r='${pi/2}' p='0.0' y='0.0'      L='0.005' W='0.15' H='0.13'/>
+  <xacro:force_bar_segment P='3' X='0.5'   Y='-0.14' Z='0.0' r='${pi/2}' p='0.0' y='0.0'      L='0.005' W='0.15' H='0.13'/>
+  <xacro:force_bar_segment P='4' X='0.466' Y='-0.28' Z='0.0' r='${pi/2}' p='0.0' y='-0.43633' L='0.005' W='0.15' H='0.14'/>
 
   <!-- plugins -->
 

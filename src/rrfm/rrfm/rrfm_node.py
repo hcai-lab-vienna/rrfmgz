@@ -117,7 +117,7 @@ class RandomRobotForestMotion(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    subscriber = RandomRobotForestMotion(hz=HZ)
+    subscriber = RandomRobotForestMotion(HZ)
     rclpy.spin(subscriber)
     subscriber.destroy_node()
     rclpy.shutdown()

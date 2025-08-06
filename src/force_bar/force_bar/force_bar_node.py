@@ -60,7 +60,7 @@ class ForceBarTopicMerger(Node):
 def main(args=None):
     for i in range(5):
         rclpy.init(args=args)
-        subscriber = ForceBarTopicMerger(sn=i, hz=HZ)
+        subscriber = ForceBarTopicMerger(i, HZ)
         rclpy.spin(subscriber)
         subscriber.destroy_node()
         rclpy.shutdown()

@@ -1,5 +1,5 @@
 <launch>
-  <executable cmd="gz sim worlds/scout_in_lehrforst.sdf"/>
+  <executable cmd="gz sim worlds/scout_in_a_box_with_trees.sdf"/>
   <ros_gz_bridge
     bridge_name="ros_gz_bridge"
     config_file="config/bridges.yaml">

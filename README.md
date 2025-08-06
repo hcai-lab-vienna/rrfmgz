@@ -1,7 +1,7 @@
 # rrfmgz
 Random Robot Forest Motion GaZebo
 
-# TODO
+# TODO rrfmgz
 
 - [x] create lehrforst with selection of trees
 - [x] create robot model with bumper and sensors
@@ -19,5 +19,13 @@ Random Robot Forest Motion GaZebo
 - [ ] simulate lidar
 - [x] simulate imu
 - [x] simulate GPS (gazebo position)
+- [x] organize into ros packages
+- [ ] rename repo
+- [ ] make real launch files
+
+# TODO RIEGL project
+
 - [ ] make a system for setting navigation points (GPS simulation)
 - [ ] automatically drive to navigation points (in a save way) and start lidar scan
+- [ ] record movement
+- [ ] predefine path - make possible (for RIEGL project)

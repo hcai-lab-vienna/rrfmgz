@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sys import argv
+
+HZ = 1000
+
 
 import rclpy
 from rclpy.node import Node
@@ -24,7 +26,7 @@ from std_msgs.msg import String
 class ForceBarTopicMerger(Node):
     """merge force bar segment topcis into a single topic"""
 
-    def __init__(self, sn:int, hz:float):
+    def __init__(self, sn:int, hz:float, qos_profile:int=10):
         """
         sn.... segment number
         dt.... timer interval
@@ -37,11 +39,11 @@ class ForceBarTopicMerger(Node):
             msg_type=Wrench,
             topic=f'/scout/force_bar/segment_{self.sn}',
             callback=self.listener_callback,
-            qos_profile=10)
+            qos_profile=qos_profile)
         self.publisher = self.create_publisher(
             msg_type=String,
             topic="/merged_force_topic",
-            qos_profile=10)
+            qos_profile=qos_profile)
         self.timer = self.create_timer(
             timer_period_sec=self.dt,
             callback=self.timer_callback)
@@ -56,14 +58,13 @@ class ForceBarTopicMerger(Node):
 
 
 def main(args=None):
-    rclpy.init(args=args)
-    subscriber = ForceBarTopicMerger(
-        sn=int(argv[1]),
-        hz=10)
-    rclpy.spin(subscriber)
-    subscriber.destroy_node()
-    rclpy.shutdown()
+    for i in range(5):
+        rclpy.init(args=args)
+        subscriber = ForceBarTopicMerger(sn=i, hz=HZ)
+        rclpy.spin(subscriber)
+        subscriber.destroy_node()
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':
-    main()
+    main() # type: ignore

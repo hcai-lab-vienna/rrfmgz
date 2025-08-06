@@ -12,13 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+HZ = 1000
+
+
 import random
-from datetime import datetime
+# from datetime import datetime
 
 import rclpy
 from rclpy.node import Node
 
-from sensor_msgs.msg import Imu
+# from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Twist, Pose
 from std_msgs.msg import String
 
@@ -28,7 +32,7 @@ from std_msgs.msg import String
 
 class RandomRobotForestMotion(Node):
 
-    def __init__(self, collision_force:float, hz:float, qos_profile:int=10):
+    def __init__(self, hz:float, qos_profile:int=10):
         """
         dt.... timer interval
         """
@@ -37,9 +41,8 @@ class RandomRobotForestMotion(Node):
         # fps in combination with frames required to make logic
         # independent of physics calculation frame rate
         self.fps:float = float(1/self.dt)
-        self.frames:int = 0
-        self.cf:float = abs(collision_force)
-        self.linear:float = 0.0
+        self.frames:int = 1
+        self.linear:float = 0.5
         self.angular:float = 0.0
         self.collision:bool = False
         self.merged_force_topic_sub = self.create_subscription(
@@ -61,7 +64,7 @@ class RandomRobotForestMotion(Node):
             callback=self.timer_callback)
 
     def calculate_movement(self, sn:int, val:float):
-        self.collision = abs(val) >= self.cf  # collision condition
+        self.collision = abs(val) >= 200  # collision condition
         lin_speed:float = 0.5
         ang_speed:float = 0.5
         td:float = 7.0  # total duration
@@ -114,9 +117,7 @@ class RandomRobotForestMotion(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    subscriber = RandomRobotForestMotion(
-        collision_force=100,
-        hz=1000)
+    subscriber = RandomRobotForestMotion(hz=HZ)
     rclpy.spin(subscriber)
     subscriber.destroy_node()
     rclpy.shutdown()

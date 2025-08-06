@@ -2,7 +2,9 @@
 
 """Generates model.sdf for the lehrforst trees out of the provided .csv"""
 
-model_path = "models/lehrforst_trees"
+import os
+
+model_path = os.path.dirname(__file__)
 
 # area in which trees will be loaded
 x_min = 15

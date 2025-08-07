@@ -17,7 +17,8 @@ HZ = 1000
 
 
 import random
-# from datetime import datetime
+from pathlib import Path
+from datetime import datetime
 
 import rclpy
 from rclpy.node import Node
@@ -32,28 +33,32 @@ from std_msgs.msg import String
 
 class RandomRobotForestMotion(Node):
 
-    def __init__(self, hz:float, qos_profile:int=10):
-        """
-        dt.... timer interval
-        """
+    def __init__(self, hz:int, qos_profile:int=10):
         super().__init__('random_robot_forest_motion')
-        self.dt = 1.0/float(hz)
+        # --- timing ---
         # fps in combination with frames required to make logic
         # independent of physics calculation frame rate
-        self.fps:float = float(1/self.dt)
-        self.frames:int = 1
+        self.dt:float = 1.0/float(hz)
+        self.fps:int = hz
+        self.maneuver_frames:int = 1
+        # --- motion ---
         self.linear:float = 0.5
         self.angular:float = 0.0
-        self.collision:bool = False
+        self.prev_linear:float = 0.0
+        self.prev_angular:float = 0.0
+        # --- save file ---
+        base_file_str = r'data/recored_positions_' + datetime.now().strftime(r"%y%m%d") + r'_{}.csv'
+        for i in range(1, 1000):
+            new_base_file_str = base_file_str.format(f"{i:03d}")
+            if not Path(new_base_file_str).exists():
+                base_file_str = new_base_file_str
+                break
+        self.save_file:str = base_file_str
+        # --- ros ---
         self.merged_force_topic_sub = self.create_subscription(
             msg_type=String,
             topic="/merged_force_topic",
             callback=self.merged_force_topic_callback,
-            qos_profile=qos_profile)
-        self.pose_sub = self.create_subscription(
-            msg_type=Pose,
-            topic="/scout/pose",
-            callback=self.pose_sub_callback,
             qos_profile=qos_profile)
         self.cmd_vel_pub = self.create_publisher(
             msg_type=Twist,
@@ -62,57 +67,58 @@ class RandomRobotForestMotion(Node):
         self.timer = self.create_timer(
             timer_period_sec=self.dt,
             callback=self.timer_callback)
+        self.pose_sub = self.create_subscription(
+            msg_type=Pose,
+            topic="/scout/pose",
+            callback=self.pose_sub_callback,
+            qos_profile=qos_profile)
+
+    def detect_collision(self, sn:int, val:float, threshold:float) -> bool:
+        "Returns True if val exceeds threshold and no maneuver is in progress, False otherwise."
+        if abs(val) > threshold:
+            log_msg = f"COL sn:{sn} val:{val:.2f}"
+            if self.maneuver_frames:
+                log_msg += " (discarding, maneuver in progress)"
+            self.get_logger().info(log_msg)
+            if not self.maneuver_frames:
+                return True
+        return False
 
     def calculate_movement(self, sn:int, val:float):
-        self.collision = abs(val) >= 200  # collision condition
-        lin_speed:float = 0.5
-        ang_speed:float = 0.5
-        td:float = 7.0  # total duration
-        bd:float = 1.5  # backwards drive duration
-        rd:float = random.uniform(2.0, td-bd-1.0)  # rotation duration
-        if self.collision:
-            self.frames = int(td * self.fps) + 1
-        if (td-bd)*self.fps < self.frames <= td*self.fps:
-            self.linear = -lin_speed
-            self.angular = 0.0
-        elif self.angular == 0:  # only set angular direction once per collision
-            if sn == 3:
-                ang_speed = random.choice([1.0, -1.0]) * ang_speed
-            elif 3 < sn:
-                ang_speed = -ang_speed
-        if rd*self.fps < self.frames <= (td-bd)*self.fps:
-            self.linear = 0.0
-            self.angular = ang_speed
-        if 0.0 < self.frames <= rd*self.fps:
-            self.linear = lin_speed
-            self.angular = 0.0
+        self.maneuver_frames = 10*self.fps
+        self.linear = -0.5
 
     def merged_force_topic_callback(self, msg):
+        "detect collisions and calculate movement"
         sn, val = msg.data.split(' ')
         sn = int(sn)
         val = float(val)
-        self.calculate_movement(sn, val)
-        if self.collision:
-            self.get_logger().info(f"COL sn:{sn} val:{val:.2f}")
-    
-    def pose_sub_callback(self, msg):
-        x = msg.position.x
-        y = msg.position.y
-        # z = msg.position.z
-        # now = datetime.now().strftime('%Y%m%d%H%M:%S%f')
-        # with open(f'data/recored_positions_{now}.csv', 'w') as f:
-        with open(f'data/recored_positions.csv', 'a') as f:
-            f.write(f"{x},{y},{int(bool(self.frames))}\n")
+        if self.detect_collision(sn, val, 200):
+            self.calculate_movement(sn, val)
+
+    def pub_to_cmd_vel(self):
+        "Move the robot with current values of self.linear & self.angular respectively."
+        self.get_logger().info(f"MOV lin:{self.linear:.1f} ang:{self.angular:.1f}")
+        msg = Twist()
+        msg.linear.x = float(self.linear)
+        msg.angular.z = float(self.angular)
+        self.cmd_vel_pub.publish(msg)
 
     def timer_callback(self):
-        if self.frames:
-            self.frames -= 1
-            msg = Twist()
-            msg.linear.x = float(self.linear)
-            msg.angular.z = float(self.angular)
-            self.cmd_vel_pub.publish(msg)
-            if self.frames % self.fps == 0:
-                self.get_logger().info(f"MOV lin:{self.linear:.1f} ang:{self.angular:.1f}")
+        "Send commands to robot if there are frames left."
+        if self.maneuver_frames:
+            self.maneuver_frames -= 1
+            if self.linear != self.prev_linear or self.angular != self.prev_angular:
+                self.prev_linear = self.linear
+                self.prev_angular = self.angular
+                self.pub_to_cmd_vel()
+        if self.maneuver_frames == 1:
+            self.linear = 0.5
+
+    def pose_sub_callback(self, msg):
+        "record position data"
+        with open(self.save_file, 'a') as f:
+            f.write(f"{msg.position.x},{msg.position.y},{self.maneuver_frames}\n")
 
 
 def main(args=None):

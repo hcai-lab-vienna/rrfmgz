@@ -9,19 +9,19 @@ Random Robot Forest Motion GaZebo
 - [x] build for test simulation with test algorithm
 - [x] build simulation border
 - [ ] set border with coordinates in software not with shape in gz
-- [ ] build an "advanced algorithm"
+- [x] build an "advanced algorithm"
 - [ ] detect crash when driving backwards
 - [ ] ~~avoid crash when driving backwards~~
 - [ ] build back bumper and adapt in software
 - [x] record map with collisions (!)
-- [ ] improve tracking and recording
+- [x] improve tracking and recording
 - [ ] implement angle of tree inclination in model
 - [ ] simulate lidar
 - [x] simulate imu
 - [x] simulate GPS (gazebo position)
 - [x] organize into ros packages
 - [ ] rename repo
-- [ ] make real launch files
+- [x] make real launch files
 
 # TODO RIEGL project
 

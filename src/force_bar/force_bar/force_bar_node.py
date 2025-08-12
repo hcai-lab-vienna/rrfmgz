@@ -13,10 +13,8 @@
 # limitations under the License.
 
 
-HZ = 1000
-
-
 import rclpy
+from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
 from geometry_msgs.msg import Wrench
@@ -26,29 +24,19 @@ from std_msgs.msg import String
 class ForceBarTopicMerger(Node):
     """merge force bar segment topcis into a single topic"""
 
-    def __init__(self, sn:int, hz:float, qos_profile:int=10):
+    def __init__(self, sn:int, hz:float):
         """
         sn.... segment number
-        dt.... timer interval
+        hz.... timer frequency
         """
         super().__init__(f'force_bar_topic_merger_{sn}')
         self.sn = sn
-        self.dt = 1.0/float(hz)
         self.val = 0.0
-        self.subscription = self.create_subscription(
-            msg_type=Wrench,
-            topic=f'/scout/force_bar/segment_{self.sn}',
-            callback=self.listener_callback,
-            qos_profile=qos_profile)
-        self.publisher = self.create_publisher(
-            msg_type=String,
-            topic="/merged_force_topic",
-            qos_profile=qos_profile)
-        self.timer = self.create_timer(
-            timer_period_sec=self.dt,
-            callback=self.timer_callback)
+        self.segment = self.create_subscription(Wrench, f'/scout/force_bar/segment_{self.sn}', self.segment_callback, 10)
+        self.publisher = self.create_publisher(String, '/merged_force_topic', 10)
+        self.timer = self.create_timer(1.0/float(hz), self.timer_callback)
 
-    def listener_callback(self, msg):
+    def segment_callback(self, msg):
         self.val = msg.force.x
 
     def timer_callback(self):
@@ -58,12 +46,16 @@ class ForceBarTopicMerger(Node):
 
 
 def main(args=None):
+    rclpy.init(args=args)
+    nodes = []
+    executor = MultiThreadedExecutor()
     for i in range(5):
-        rclpy.init(args=args)
-        subscriber = ForceBarTopicMerger(i, HZ)
-        rclpy.spin(subscriber)
-        subscriber.destroy_node()
-        rclpy.shutdown()
+        nodes.append(ForceBarTopicMerger(i, hz=1000))
+        executor.add_node(nodes[-1])
+    executor.spin()
+    for node in nodes:
+        node.destroy_node()
+    rclpy.shutdown()
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from glob import glob
 
 tree_x = []
 tree_y = []
@@ -14,7 +15,9 @@ x = []
 y = []
 c = []
 
-with open("data/recored_positions.csv", "r") as f:
+file_path = sorted(glob("data/recored_positions_*_*.csv"))[-1]
+
+with open(file_path, "r") as f:
     lines = f.readlines()
     for line in lines:
         tmp = line.split(',')
@@ -22,6 +25,7 @@ with open("data/recored_positions.csv", "r") as f:
         y.append(float(tmp[1]))
         c.append(int(tmp[2]))
 
+plt.title(file_path)
 plt.scatter(x, y, c=['red' if i else 'black' for i in c], s=3)
 plt.scatter(tree_x, tree_y, c='green', s=50)
 plt.xlim(-30, 30)

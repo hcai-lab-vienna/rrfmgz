@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from glob import glob
+from sys import argv
 
 tree_x = []
 tree_y = []
@@ -15,7 +16,10 @@ x = []
 y = []
 c = []
 
-file_path = sorted(glob("data/recored_positions_*_*.csv"))[-1]
+if len(argv) >= 2:
+    file_path = argv[1]
+else:
+    file_path = sorted(glob("data/recored_positions_*_*.csv"))[-1]
 
 with open(file_path, "r") as f:
     lines = f.readlines()

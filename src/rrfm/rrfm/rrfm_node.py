@@ -15,7 +15,7 @@
 
 import random
 import math
-from pathlib import Path
+from glob import glob
 from datetime import datetime
 
 import rclpy
@@ -82,12 +82,11 @@ class RandomRobotForestMotion(Node):
         self.pose = self.create_subscription(Pose, '/scout/pose', self.pose_callback, 10)
         # for each run a day create a new save file
         if self.record:
-            self.save_file = ''
-            base_str = r'data/recored_positions_' + datetime.now().strftime(r"%y%m%d") + r'_{}.csv'
-            for i in range(1, 1000):
-                self.save_file = base_str.format(f"{i:03d}")
-                if not Path(self.save_file).exists():
-                    break
+            base_str = f'data/recored_positions_{datetime.now().strftime(r"%y%m%d")}_'
+            last_file = sorted(glob(base_str + '*'))[-1]
+            file_nr = int(last_file.replace(base_str, '').split('.')[0])
+            file_nr += 1
+            self.save_file = base_str + f'{file_nr:03d}.csv'
         self.move(self.starting_velocity, 0)
 
     def move(self, linear:float, angular:float):

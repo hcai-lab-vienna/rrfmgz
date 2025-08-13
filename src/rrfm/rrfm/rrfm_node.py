@@ -29,9 +29,10 @@ SEGMENTS:int = 5
 SEGMENT_THRESHOLDS:list[float] = [200, 200, 200, 200, 200]
 assert len(SEGMENT_THRESHOLDS) == SEGMENTS
 STARTING_VELOCITY:float = 0.5
+BOX_SIZE:tuple[float, float] = (50.0, 50.0)
 
 
-def COMMANDS(sn:int=0, val:float=0.0) -> list[tuple]:
+def COMMANDS(sn:int=3, val:float=0.0) -> list[tuple]:
     "motion routine when collision happens"
     a1 = 0.5 * (-1 if sn < 3 else random.choice([-1, 1]) if sn == 3 else 1)
     d1 = random.uniform(2, 6)
@@ -47,6 +48,7 @@ class RandomRobotForestMotion(Node):
 
     def __init__(self):
         super().__init__('random_robot_forest_motion')
+        self.starting_position = ()
         self.command_stack = []
         self.timer = self.create_timer(0, lambda *args, **kwargs: None)
         self.timer.cancel()
@@ -92,6 +94,23 @@ class RandomRobotForestMotion(Node):
             self.get_logger().info(log_msg)
         return return_val
 
+    def detect_wall(self, pos_x:float, pos_y:float) -> bool:
+        return_val = False
+        if not self.starting_position:
+            self.starting_position = (pos_x, pos_y)
+            self.get_logger().info(f"START: x:{pos_x:.2f} y:{pos_y:.2f}")
+        else:
+            pos_x = self.starting_position[0] - pos_x
+            pos_y = self.starting_position[1] - pos_y
+            if abs(pos_x) >= BOX_SIZE[0]/2 or abs(pos_y) >= BOX_SIZE[1]/2:
+                log_msg = f"WALL x:{pos_x:.2f} y:{pos_y:.2f}"
+                if self.command_stack:
+                    log_msg += ' (ignored)'
+                else:
+                    return_val = True
+                self.get_logger().info(log_msg)
+        return return_val
+
     def command_callback(self):
         "Schedules commands from command_stack and waits duration for next command (recursive)."
         self.timer.cancel()
@@ -114,7 +133,10 @@ class RandomRobotForestMotion(Node):
             self.command_callback()
 
     def pose_callback(self, msg:Pose):
-        "record position data"
+        "Enforce map boundaries and record position data."
+        if self.detect_wall(msg.position.x, msg.position.y):
+            self.stop()
+            self.command_stack = COMMANDS()
         with open(self.save_file, 'a') as f:
             f.write(f"{msg.position.x},{msg.position.y},{len(self.command_stack)}\n")
 

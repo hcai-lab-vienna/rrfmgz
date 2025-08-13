@@ -8,7 +8,7 @@ Random Robot Forest Motion GaZebo
 - [x] ros gz bridge etc.
 - [x] build for test simulation with test algorithm
 - [x] build simulation border
-- [ ] set border with coordinates in software not with shape in gz
+- [x] set border with coordinates in software not with shape in gz
 - [x] build an "advanced algorithm"
 - [ ] detect crash when driving backwards
 - [ ] ~~avoid crash when driving backwards~~

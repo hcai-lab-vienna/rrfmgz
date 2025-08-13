@@ -30,27 +30,34 @@ class RandomRobotForestMotion(Node):
 
     segment_thresholds:list[float] = [200, 200, 200, 200, 200]
     starting_velocity:float = 0.5
-    box_size:tuple[float, float] = (30.0, 30.0)
-    record:bool = False
+    box_size:tuple[float, float] = (40.0, 40.0)
+    record:bool = True
 
     @staticmethod
     def collision_commands(sn:int=3, val:float=0.0) -> list[tuple]:
         "motion routine when collision happens"
-        a1 = 0.5 * (-1 if sn < 3 else random.choice([-1, 1]) if sn == 3 else 1)
-        d1 = random.uniform(2, 6)
+        a2 = 0.5 * (-1 if sn < 3 else random.choice([-1, 1]) if sn == 3 else 1)
+        d2 = random.uniform(2, 6)
         return [
             # linear, angular,   duration
             (   -0.5,     0.0,        1.5),
-            (    0.0,      a1,         d1),
+            (    0.0,      a2,         d2),
             (    0.5,     0.0,        0.1)
         ].copy()
 
     @staticmethod
     def wall_commands(pos_x:float=0.0, pos_y:float=0.0, heading:float=0.0, out_of_bounds:bool=True) -> list[tuple]:
         "motion routine when out of bounds"
+        sign = heading // abs(heading)
+        heading = abs(heading)
+        l1 = -0.5 if heading > math.pi/2 else 0.5
+        a2 = sign*0.5
+        d2 = 6*heading/math.pi
         return [
             # linear, angular,   duration
-
+            (     l1,     0.0,        1.5),
+            (    0.0,      a2,         d2),
+            (    0.5,       0,        0.1)
         ].copy()
 
     @staticmethod
@@ -163,6 +170,7 @@ class RandomRobotForestMotion(Node):
         self.pose_y = msg.position.y
         self.yaw = self.quaternion_to_yaw(msg.orientation)
         if self.detect_wall() and not self.command_stack:
+            self.stop()
             heading = self.angle_to_center(self.pose_x, self.pose_y, self.yaw)
             self.command_stack = self.wall_commands(self.pose_x, self.pose_y, heading, self.out_of_bounds)
         if self.record:

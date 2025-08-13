@@ -25,7 +25,22 @@ from geometry_msgs.msg import Twist, Pose
 from std_msgs.msg import String
 
 
-# ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0}, angular: {z: 0.0}}"
+SEGMENTS:int = 5
+SEGMENT_THRESHOLDS:list[float] = [200, 200, 200, 200, 200]
+assert len(SEGMENT_THRESHOLDS) == SEGMENTS
+STARTING_VELOCITY:float = 0.5
+
+
+def COMMANDS(sn:int=0, val:float=0.0) -> list[tuple]:
+    "motion routine when collision happens"
+    a1 = 0.5 * (-1 if sn < 3 else random.choice([-1, 1]) if sn == 3 else 1)
+    d1 = random.uniform(2, 6)
+    #     linear, angular,   duration
+    return [
+        (   -0.5,       0,        1.5),
+        (      0,      a1,         d1),
+        (    0.5,       0,          1)
+    ].copy()
 
 
 class RandomRobotForestMotion(Node):
@@ -55,6 +70,7 @@ class RandomRobotForestMotion(Node):
         self.get_logger().info(f"MOVE lin:{linear:.1f} ang:{angular:.1f}")
 
     def stop(self):
+        "does the stopping"
         self.command_stack = []
         if self.timer:
             self.timer.cancel()
@@ -76,19 +92,8 @@ class RandomRobotForestMotion(Node):
             self.get_logger().info(log_msg)
         return return_val
 
-    def populate_command_stack(self, sn:int=0, val:float=0.0):
-        "motion routine when collision happens"
-        a1 = 0.5 * (-1 if sn < 3 else random.choice([-1, 1]) if sn == 3 else 1)
-        d1 = random.uniform(2, 6)
-        self.command_stack = [
-            # linear, angular,   duration
-            (   -0.5,       0,        1.5),
-            (      0,      a1,         d1),
-            (    0.5,       0,          1)
-        ]
-
     def command_callback(self):
-        "schedules commands from command_stack and waits duration for next command (recursive)"
+        "Schedules commands from command_stack and waits duration for next command (recursive)."
         self.timer.cancel()
         if self.command_stack:
             linear, angular, duration = map(float, self.command_stack.pop(0))
@@ -98,13 +103,13 @@ class RandomRobotForestMotion(Node):
                 self.get_logger().info(f"WAIT sec:{duration:.2f}")
 
     def collision_callback(self, msg:String):
-        "detect collisions and calculate movement"
+        "Detect collisions and calculates movement."
         sn, val = msg.data.split(' ')
         sn = int(sn)
         val = float(val)
-        if self.detect_collision(sn, val, 200):
+        if self.detect_collision(sn, val, SEGMENT_THRESHOLDS[sn]):
             self.stop()
-            self.populate_command_stack(sn, val)
+            self.command_stack = COMMANDS(sn, val)
         if self.timer.is_canceled():
             self.command_callback()
 
@@ -117,7 +122,7 @@ class RandomRobotForestMotion(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = RandomRobotForestMotion()
-    node.move(0.5, 0)
+    node.move(STARTING_VELOCITY, 0)
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()

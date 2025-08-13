@@ -21,6 +21,10 @@ from geometry_msgs.msg import Wrench
 from std_msgs.msg import String
 
 
+SEGMENTS:int = 5
+HZ:float = 1000.0
+
+
 class ForceBarTopicMerger(Node):
     """merge force bar segment topcis into a single topic"""
 
@@ -49,9 +53,9 @@ def main(args=None):
     rclpy.init(args=args)
     nodes = []
     executor = MultiThreadedExecutor()
-    for i in range(5):
-        nodes.append(ForceBarTopicMerger(i, hz=1000))
-        executor.add_node(nodes[-1])
+    for i in range(SEGMENTS):
+        nodes.append(ForceBarTopicMerger(i, hz=HZ))
+        executor.add_node(nodes[i])
     executor.spin()
     for node in nodes:
         node.destroy_node()
@@ -59,4 +63,4 @@ def main(args=None):
 
 
 if __name__ == '__main__':
-    main() # type: ignore
+    main()

@@ -21,14 +21,13 @@ from geometry_msgs.msg import Wrench
 from std_msgs.msg import String
 
 
-SEGMENTS:int = 5
-HZ:float = 1000.0
-
-
 class ForceBarTopicMerger(Node):
     """merge force bar segment topcis into a single topic"""
 
-    def __init__(self, sn:int, hz:float):
+    segments:int = 5
+    hz:float = 1000.0
+
+    def __init__(self, sn:int):
         """
         sn.... segment number
         hz.... timer frequency
@@ -38,7 +37,7 @@ class ForceBarTopicMerger(Node):
         self.val = 0.0
         self.segment = self.create_subscription(Wrench, f'/scout/force_bar/segment_{self.sn}', self.segment_callback, 10)
         self.publisher = self.create_publisher(String, '/merged_force_topic', 10)
-        self.timer = self.create_timer(1.0/float(hz), self.timer_callback)
+        self.timer = self.create_timer(1.0/self.hz, self.timer_callback)
 
     def segment_callback(self, msg):
         self.val = msg.force.x
@@ -53,8 +52,8 @@ def main(args=None):
     rclpy.init(args=args)
     nodes = []
     executor = MultiThreadedExecutor()
-    for i in range(SEGMENTS):
-        nodes.append(ForceBarTopicMerger(i, hz=HZ))
+    for i in range(ForceBarTopicMerger.segments):
+        nodes.append(ForceBarTopicMerger(i))
         executor.add_node(nodes[i])
     executor.spin()
     for node in nodes:

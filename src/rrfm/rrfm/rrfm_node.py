@@ -34,33 +34,6 @@ class RandomRobotForestMotion(Node):
     record:bool = True
 
     @staticmethod
-    def collision_commands(sn:int=3, val:float=0.0) -> list[tuple]:
-        "motion routine when collision happens"
-        a2 = 0.5 * (-1 if sn < 3 else random.choice([-1, 1]) if sn == 3 else 1)
-        d2 = random.uniform(2, 6)
-        return [
-            # linear, angular,   duration
-            (   -0.5,     0.0,        1.5),
-            (    0.0,      a2,         d2),
-            (    0.5,     0.0,        0.1)
-        ].copy()
-
-    @staticmethod
-    def wall_commands(pos_x:float=0.0, pos_y:float=0.0, heading:float=0.0, out_of_bounds:bool=True) -> list[tuple]:
-        "motion routine when out of bounds"
-        sign = heading // abs(heading)
-        heading = abs(heading)
-        l1 = -0.5 if heading > math.pi/2 else 0.5
-        a2 = sign*0.5
-        d2 = 6*heading/math.pi
-        return [
-            # linear, angular,   duration
-            (     l1,     0.0,        1.5),
-            (    0.0,      a2,         d2),
-            (    0.5,       0,        0.1)
-        ].copy()
-
-    @staticmethod
     def quaternion_to_yaw(q:Quaternion) -> float:
         "Converts a quaternion into yaw (rotation about Z axis). Returns yaw in radians."
         siny_cosp = 2*(q.w*q.z + q.x*q.y)
@@ -95,6 +68,32 @@ class RandomRobotForestMotion(Node):
             file_nr += 1
             self.save_file = base_str + f'{file_nr:03d}.csv'
         self.move(self.starting_velocity, 0)
+
+    def collision_commands(self, sn:int=3) -> list[tuple]:
+        "motion routine when collision happens"
+        a2 = 0.5 * (-1 if sn < 3 else random.choice([-1, 1]) if sn == 3 else 1)
+        d2 = random.uniform(2, 6)
+        return [
+            # linear, angular,   duration
+            (   -0.5,     0.0,        1.5),
+            (    0.0,      a2,         d2),
+            (    0.5,     0.0,        0.1)
+        ].copy()
+
+    def wall_commands(self) -> list[tuple]:
+        "motion routine when out of bounds"
+        heading = self.angle_to_center(self.pose_x, self.pose_y, self.yaw)
+        sign = heading // abs(heading)
+        heading = abs(heading)
+        l1 = -0.5 if heading > math.pi/2 else 0.5
+        a2 = sign*0.5
+        d2 = 6*heading/math.pi
+        return [
+            # linear, angular,   duration
+            (     l1,     0.0,        1.5),
+            (    0.0,      a2,         d2),
+            (    0.5,       0,        0.1)
+        ].copy()
 
     def move(self, linear:float, angular:float):
         "Move the robot with current values of self.linear & self.angular respectively."
@@ -160,7 +159,7 @@ class RandomRobotForestMotion(Node):
         val = float(val)
         if self.detect_collision(sn, val, self.segment_thresholds[sn]):
             self.stop()
-            self.command_stack = self.collision_commands(sn, val)
+            self.command_stack = self.collision_commands(sn)
         if self.timer.is_canceled():
             self.command_callback()
 
@@ -171,8 +170,7 @@ class RandomRobotForestMotion(Node):
         self.yaw = self.quaternion_to_yaw(msg.orientation)
         if self.detect_wall() and not self.command_stack:
             self.stop()
-            heading = self.angle_to_center(self.pose_x, self.pose_y, self.yaw)
-            self.command_stack = self.wall_commands(self.pose_x, self.pose_y, heading, self.out_of_bounds)
+            self.command_stack = self.wall_commands()
         if self.record:
             with open(self.save_file, 'a') as f:
                 f.write(f"{self.pose_x},{self.pose_y},{len(self.command_stack)},{self.yaw}\n")

@@ -23,7 +23,6 @@ def plot_trees(file_path="models/lehrforst_trees/tree_position_filtered.csv"):
 def plot_robot(file_path):
     x = []
     y = []
-    yaw = []
     col = []
     oob = []
     with open(file_path, "r") as f:
@@ -32,9 +31,8 @@ def plot_robot(file_path):
             tmp = line.split(',')
             x.append(float(tmp[0]))
             y.append(float(tmp[1]))
-            yaw.append(float(tmp[2]))
-            col.append(int(tmp[3]))
-            oob.append(int(tmp[4]))
+            col.append(int(tmp[4]))
+            oob.append(int(tmp[5]))
     dot_colors = []
     sizes = []
     for i in range(len(col)):

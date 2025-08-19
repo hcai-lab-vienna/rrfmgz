@@ -78,7 +78,6 @@ class RandomRobotForestMotion(Node):
             else:
                 file_nr = 1
             self.save_file = base_str + f'{file_nr:03d}.csv'
-        # Let's go!
 
 
     def collision_commands(self, sn:int=3) -> list[tuple]:
@@ -202,7 +201,7 @@ class RandomRobotForestMotion(Node):
             self.command_stack = self.wall_commands()
         if self.record:
             with open(self.save_file, 'a') as f:
-                f.write(f"{self.pose_x},{self.pose_y},{self.yaw},{int(self.immediate_collision)},{int(self.out_of_bounds)}\n")
+                f.write(f"{self.pose_x},{self.pose_y},{self.yaw},{self.heading},{int(self.immediate_collision)},{int(self.out_of_bounds)}\n")
 
 
 def main(args=None):

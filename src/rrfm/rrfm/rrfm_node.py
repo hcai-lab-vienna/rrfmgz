@@ -29,7 +29,6 @@ from std_msgs.msg import String
 class RandomRobotForestMotion(Node):
 
     segment_thresholds:list[float] = [200, 200, 200, 200, 200]
-    starting_velocity:float = 0.5
     box_size:tuple[float, float] = (40.0, 40.0)
     record:bool = True
 
@@ -50,49 +49,63 @@ class RandomRobotForestMotion(Node):
 
     def __init__(self):
         super().__init__('random_robot_forest_motion')
+        # command_stack will be executed by the robot from top to bottom,
+        # each command is a tuple of (linear speed, angular speed, duration in seconds).
         self.command_stack = []
+        # out_of_bounds will be set to True if the robot is OUT OF BOUNDS (if this isn't obvious oO)
         self.out_of_bounds = False
+        # internal pose states of the robot will be continuously updated.
         self.pose_x = 0.0
         self.pose_y = 0.0
         self.yaw = 0.0
-        self.timer = self.create_timer(0, lambda *args, **kwargs: None)
-        self.timer.cancel()
+        # timer for each command executed by command_stack, last filed of each command_stack tuple will be the duration.
+        self.command_timer = self.create_timer(0, lambda: None)
+        self.command_timer.cancel()
+        # a timer to prevent multiple collision commands in a short amount of time
+        self.immediate_collision_timer = self.create_timer(0, lambda: None)
+        self.immediate_collision_timer.cancel()
+        self.immediate_collision = False
+        # ros callbacks
         self.cmd_vel = self.create_publisher(Twist,'/cmd_vel', 10)
         self.collision = self.create_subscription(String, '/merged_force_topic', self.collision_callback, 10)
         self.pose = self.create_subscription(Pose, '/scout/pose', self.pose_callback, 10)
         # for each run a day create a new save file
         if self.record:
             base_str = f'data/recored_positions_{datetime.now().strftime(r"%y%m%d")}_'
-            last_file = sorted(glob(base_str + '*'))[-1]
-            file_nr = int(last_file.replace(base_str, '').split('.')[0])
-            file_nr += 1
+            file_list = sorted(glob(base_str + '*'))
+            if file_list:
+                file_nr = 1 + int(file_list[-1].replace(base_str, '').split('.')[0])
+            else:
+                file_nr = 1
             self.save_file = base_str + f'{file_nr:03d}.csv'
-        self.move(self.starting_velocity, 0)
+        # Let's go!
+
 
     def collision_commands(self, sn:int=3) -> list[tuple]:
         "motion routine when collision happens"
         a2 = 0.5 * (-1 if sn < 3 else random.choice([-1, 1]) if sn == 3 else 1)
         d2 = random.uniform(2, 6)
         return [
-            # linear, angular,   duration
-            (   -0.5,     0.0,        1.5),
-            (    0.0,      a2,         d2),
-            (    0.5,     0.0,        0.1)
+            # linear, angular, duration
+            (   -0.5,     0.0,      1.5),
+            (    0.0,      a2,       d2),
+            (    0.5,     0.0,      0.1)
         ].copy()
 
     def wall_commands(self) -> list[tuple]:
         "motion routine when out of bounds"
-        heading = self.angle_to_center(self.pose_x, self.pose_y, self.yaw)
-        sign = heading // abs(heading)
-        heading = abs(heading)
-        l1 = -0.5 if heading > math.pi/2 else 0.5
-        a2 = sign*0.5
-        d2 = 6*heading/math.pi
+        sign = self.heading // abs(self.heading)
+        heading = abs(self.heading)
+        if heading > math.pi/16:
+            d1 = 0.5
+            l2 = 0.0
+        else:
+            d1 = 0.0
+            l2 = 0.5
         return [
-            # linear, angular,   duration
-            (     l1,     0.0,        1.5),
-            (    0.0,      a2,         d2),
-            (    0.5,       0,        0.1)
+            # linear,  angular, duration
+            (    0.0, sign*0.5,       d1),
+            (     l2,      0.0,      0.1)
         ].copy()
 
     def move(self, linear:float, angular:float):
@@ -106,22 +119,34 @@ class RandomRobotForestMotion(Node):
     def stop(self):
         "does the stopping"
         self.command_stack = []
-        if self.timer:
-            self.timer.cancel()
+        if self.command_timer:
+            self.command_timer.cancel()
         msg = Twist()
         msg.linear.x = 0.0
         msg.angular.z = 0.0
         self.cmd_vel.publish(msg)
         self.get_logger().info("STOP")
 
+    def set_immediate_collision(self):
+        "Prevent to many collision detections in a short amount of time."
+        if not self.immediate_collision:
+            self.immediate_collision = True
+            self.immediate_collision_timer = self.create_timer(0.5, self.reset_immediate_collision)
+    
+    def reset_immediate_collision(self):
+        "Allows collision detection again, should only be called by set_immediate_collision."
+        self.immediate_collision_timer.cancel()
+        self.immediate_collision = False
+
     def detect_collision(self, sn:int, val:float, threshold:float) -> bool:
         "Returns True if val exceeds threshold and no maneuver is in progress, False otherwise."
         return_val = False
         if abs(val) > threshold:
             log_msg = f"COLL sn:{sn} val:{val:.2f}"
-            if self.command_stack:
+            if self.immediate_collision:
                 log_msg += ' (ignored)'
             else:
+                self.set_immediate_collision()
                 return_val = True
             self.get_logger().info(log_msg)
         return return_val
@@ -130,7 +155,7 @@ class RandomRobotForestMotion(Node):
         "Returns True if outside of BOX_SIZE."
         return_val = False
         if abs(self.pose_x) >= self.box_size[0]/2 or abs(self.pose_y) >= self.box_size[1]/2:
-            log_msg = f"WALL pose_x:{self.pose_x:.2f} pose_y:{self.pose_y:.2f} yaw:{self.yaw:.2f}"
+            log_msg = f"WALL pose_x:{self.pose_x:.2f} pose_y:{self.pose_y:.2f} yaw:{self.yaw:.2f} heading:{self.heading:.2f}"
             if self.command_stack:
                 log_msg += ' (ignored)'
             else:
@@ -144,13 +169,16 @@ class RandomRobotForestMotion(Node):
 
     def command_callback(self):
         "Schedules commands from command_stack and waits duration for next command (recursive)."
-        self.timer.cancel()
+        self.command_timer.cancel()
         if self.command_stack:
             linear, angular, duration = map(float, self.command_stack.pop(0))
             self.move(linear, angular)
             if duration:
-                self.timer = self.create_timer(duration, self.command_callback)
+                self.command_timer = self.create_timer(duration, self.command_callback)
                 self.get_logger().info(f"WAIT sec:{duration:.2f}")
+        else:
+            # stand still prevention
+            self.command_stack = [(0.5, 0.0, 10.0)]
 
     def collision_callback(self, msg:String):
         "Detect collisions and calculates movement."
@@ -160,7 +188,7 @@ class RandomRobotForestMotion(Node):
         if self.detect_collision(sn, val, self.segment_thresholds[sn]):
             self.stop()
             self.command_stack = self.collision_commands(sn)
-        if self.timer.is_canceled():
+        if self.command_timer.is_canceled():
             self.command_callback()
 
     def pose_callback(self, msg:Pose):
@@ -168,12 +196,13 @@ class RandomRobotForestMotion(Node):
         self.pose_x = msg.position.x
         self.pose_y = msg.position.y
         self.yaw = self.quaternion_to_yaw(msg.orientation)
+        self.heading = self.angle_to_center(self.pose_x, self.pose_y, self.yaw)
         if self.detect_wall() and not self.command_stack:
             self.stop()
             self.command_stack = self.wall_commands()
         if self.record:
             with open(self.save_file, 'a') as f:
-                f.write(f"{self.pose_x},{self.pose_y},{len(self.command_stack)},{self.yaw}\n")
+                f.write(f"{self.pose_x},{self.pose_y},{self.yaw},{int(self.immediate_collision)},{int(self.out_of_bounds)}\n")
 
 
 def main(args=None):

@@ -79,7 +79,6 @@ class RandomRobotForestMotion(Node):
                 file_nr = 1
             self.save_file = base_str + f'{file_nr:03d}.csv'
 
-
     def collision_commands(self, sn:int=3) -> list[tuple]:
         "motion routine when collision happens"
         a2 = 0.5 * (-1 if sn < 3 else random.choice([-1, 1]) if sn == 3 else 1)

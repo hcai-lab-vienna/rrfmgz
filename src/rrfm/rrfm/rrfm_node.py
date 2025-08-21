@@ -33,6 +33,21 @@ def quaternion_to_yaw(q:Quaternion) -> float:
     return math.atan2(siny_cosp, cosy_cosp)
 
 
+def angle_to_center(pose:tuple) -> float:
+    """
+    Angle to the origin.
+    Why -y and -x?
+    Because we are going from (x, y) to (0, 0),
+    which is a vector pointing from the robot toward the origin
+    """
+    return math.atan2(-pose[1], -pose[0])
+
+
+def normalize_angle(angle:float) -> float:
+    "To prevent yaw angle wrapping from -pi to pi, causes discontinuities in rotation"
+    return (angle + math.pi) % (2 * math.pi) - math.pi
+
+
 class RandomRobotForestMotion(Node):
 
     segment_thresholds:list[float] = [200, 200, 200, 200, 200]
@@ -51,11 +66,6 @@ class RandomRobotForestMotion(Node):
         self.pose = 0.0, 0.0
         self.yaw = 0.0
         self.theta = 0.0  # angle from center of map to robot
-        #R self.pitch = 0.0
-        #R self.roll = 0.0
-        #R self.heading = 0.0
-        #R pose logging in an numpy array, used for computing of heading
-        #R self.pose_log = [(0.0, 0.0)]*2
         # timer for each command executed by command_stack, last filed of each command_stack tuple will be the duration.
         self.command_timer = self.create_timer(0, lambda: None)
         self.command_timer.cancel()
@@ -77,45 +87,6 @@ class RandomRobotForestMotion(Node):
                 file_nr = 1
             self.save_file = base_str + f'{file_nr:03d}.csv'
 
-    #R def log_pose(self) -> list[tuple]:
-    #R     "Logs several last position entries for heading computation"
-    #R     for i in range(len(self.pose_log)-1):
-    #R         self.pose_log[i] = self.pose_log[i+1]
-    #R     self.pose_log[-1] = self.pose
-    #R     return self.pose_log
-
-    #R @staticmethod
-    #R def vector(p1, p2) -> tuple:
-    #R     x = p2[0] - p1[0]
-    #R     y = p2[1] - p1[1]
-    #R     n = (x**2 + y**2)**0.5
-    #R     if n > 0.0:
-    #R         x /= n
-    #R         y /= n
-    #R     return x, y
-
-    #R @staticmethod
-    #R def vector_prod(v1, v2) -> float:
-    #R     return v1[0]*v2[0] + v1[1]*v2[1]
-
-    #R def calculate_heading(self) -> float:
-    #R     """
-    #R     Returns a number between (-1, 1] indicating heading from zero coordinate or tarting point.
-    #R     The number represents a circle where 0 means the robot is facing towards the center and
-    #R     abs(1) means it is facing away. The sign indicates direction (clockwise positive then negative).
-    #R     The value flips from -1 to 1 and vise versa.
-    #R     """
-    #R     theta = math.atan2(self.pose[1], self.pose[0])
-    #R     yaw = math.pi+self.yaw
-    #R     theta /= math.pi
-    #R     yaw /= math.pi
-    #R     print(theta, yaw)
-    #R     return yaw - theta
-    #R     #R     p = self.log_pose()
-    #R     #R     vr = self.vector(p[-2], p[-1])
-    #R     #R     vc = self.vector(self.pose, (0.0, 0.0))
-    #R     #R     return self.vector_prod(vc, vr)
-
     def collision_commands(self, sn:int=3) -> list[tuple]:
         "motion routine when collision happens"
         a2 = 0.5 * (-1 if sn < 3 else random.choice([-1, 1]) if sn == 3 else 1)
@@ -129,16 +100,22 @@ class RandomRobotForestMotion(Node):
 
     def wall_commands(self) -> list[tuple]:
         "motion routine when out of bounds"
-        heading = abs(math.pi+self.yaw-self.theta)
-        if heading > 0.33:
-            d1 = 0.5
+        target_yaw = self.theta - self.yaw
+        angle = normalize_angle(target_yaw)
+        try:
+            sign = angle // abs(angle)
+        except ZeroDivisionError:
+            sign = 1
+        heading = abs(angle)/math.pi
+        if heading > 0.1:
+            d1 = 5*heading
             l2 = 0.0
         else:
             d1 = 0.0
             l2 = 0.5
         return [
             # linear,  angular, duration
-            (    0.0,      0.5,       d1),
+            (    0.0, sign*0.5,       d1),
             (     l2,      0.0,      0.1)
         ].copy()
 
@@ -229,7 +206,7 @@ class RandomRobotForestMotion(Node):
         "Enforce map boundaries and record position data."
         self.pose = msg.position.x, msg.position.y
         self.yaw = quaternion_to_yaw(msg.orientation)
-        self.theta = math.atan2(self.pose[1], self.pose[0])
+        self.theta = angle_to_center(self.pose)
         if self.detect_wall() and not self.command_stack:
             self.stop()
             self.command_stack = self.wall_commands()

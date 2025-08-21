@@ -56,6 +56,25 @@
     </include>
   </model>
 
+  <model name="center_pillar">
+    <static>true</static>
+    <link name='center'>
+      <pose>0.0 0.0 0.0 3.14159 0 0</pose>
+      <visual name='visual'>
+        <geometry>
+          <cylinder>
+            <radius>0.05</radius>
+            <length>20</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1 0 0 0.75</ambient>
+          <diffuse>1 0 0 0.75</diffuse>
+          <specular>1 0 0 0.75</specular>
+        </material>
+      </visual>
+    </link>
+  </model>
 
 </world>
 

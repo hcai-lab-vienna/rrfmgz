@@ -98,7 +98,7 @@ if __name__ == '__main__':
         exit()
 
     instance = None
-    tmp = None
+    old_latlong = None
 
     try:
 
@@ -111,17 +111,19 @@ if __name__ == '__main__':
             while True:
                 latlong = instance.gnss_latlong()
                 if latlong:
-                    lat, long = latlong
-                    print(f"Latitude: {lat:.8f}, Longitude: {long:.8f}")
+                    if not old_latlong or latlong != old_latlong:
+                        lat, long = latlong
+                        print(f"Latitude: {lat:.8f}, Longitude: {long:.8f}")
+                    if not old_latlong:
+                        old_latlong = latlong
                     if arg == 'echo':
                         break
                     else:
-                        if not tmp:
-                            tmp = latlong
-                        dlat, dlong = latlong_displacement_to_xy_meter(latlong, tmp)
-                        print(f"Displacement X (East-West):   {dlat:.8f}")
-                        print(f"Displacement Y (North-South): {dlong:.8f}")
-                        tmp = latlong
+                        dlat, dlong = latlong_displacement_to_xy_meter(latlong, old_latlong)
+                        if dlat != 0.0 or dlong !=0.0:
+                            print(f"Displacement X (East-West):   {dlat:.8f}")
+                            print(f"             Y (North-South): {dlong:.8f}")
+                    old_latlong = latlong
 
         elif arg == 'down':
             instance = AT(port='/dev/ttyUSB2')

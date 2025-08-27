@@ -1,10 +1,28 @@
 #!/usr/bin/env python3
 
-import time
 import serial
 import pynmea2
 import re
-from sys import argv
+import math
+import sys
+
+
+def latlong_displacement_to_xy_meter(latlong1:tuple[float,float],
+                                     latlong2:tuple[float,float]
+                                     ) -> tuple[float,float]:
+    """
+    Converts latitude and longitude displacement to
+    x (East-West) and y (North-South) displacement in meters.
+    """
+    lat1, long1 = latlong1
+    lat2, long2 = latlong2
+    R = 6378137 # Earth radius in meters
+    delta_lat = math.radians(lat2 - lat1)
+    delta_long = math.radians(long2 - long1)
+    lat_avg = math.radians((lat1 + lat2) / 2)
+    delta_y = delta_lat * R
+    delta_x = delta_long * R * math.cos(lat_avg)
+    return delta_x, delta_y
 
 
 class AT:
@@ -71,7 +89,7 @@ if __name__ == '__main__':
     cmds =  {'up', 'echo', 'stream', 'down'}
 
     try:
-        arg = argv[1]
+        arg = sys.argv[1]
         if arg not in cmds:
             raise Exception('invalid command')
     except Exception:
@@ -80,6 +98,7 @@ if __name__ == '__main__':
         exit()
 
     instance = None
+    tmp = None
 
     try:
 
@@ -96,6 +115,13 @@ if __name__ == '__main__':
                     print(f"Latitude: {lat:.8f}, Longitude: {long:.8f}")
                     if arg == 'echo':
                         break
+                    else:
+                        if not tmp:
+                            tmp = latlong
+                        dlat, dlong = latlong_displacement_to_xy_meter(latlong, tmp)
+                        print(f"Displacement X (East-West):   {dlat:.8f}")
+                        print(f"Displacement Y (North-South): {dlong:.8f}")
+                        tmp = latlong
 
         elif arg == 'down':
             instance = AT(port='/dev/ttyUSB2')

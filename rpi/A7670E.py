@@ -31,26 +31,36 @@ class AT:
         except serial.SerialException as e:
             raise Exception(f"Error sending AT command: {e}")
 
-    def initialize_gnss(self):
+    def gnss_up(self):
         try:
             self.send_at_command('AT+CGNSSPWR=1')
             self.send_at_command('AT+CGNSSTST=1')
         except serial.SerialException as e:
             raise Exception(f"Error initializing GNSS: {e}")
 
+    def gnss_down(self):
+        try:
+            self.send_at_command('AT+CGNSSPWR=0')
+            self.send_at_command('AT+CGNSSTST=0')
+        except serial.SerialException as e:
+            raise Exception(f"Error stopping GNSS: {e}")
+
     def gnss_params(self):
         try:
             response = str(self.ser.readline(), encoding='utf-8')
             if response.startswith("$GNRMC"):
-                rmc = pynmea2.parse(response)
-                return rmc
+                return pynmea2.parse(response)
             else:
                 return None
         except serial.SerialException as e:
             raise Exception(f"Error reading GNSS params: {e}")
 
     def gnss_latlong(self):
-        pass
+        response = self.gnss_params()
+        if response and re.match(r"^\d+?\.\d+?$", response.lat):
+            return float(response.latitude), float(response.longitude)
+        else:
+            return None
 
     def close(self):
         return self.ser.close()
@@ -58,8 +68,9 @@ class AT:
 
 if __name__ == '__main__':
 
+    cmds =  {'init', 'echo', 'stream', 'disable'}
+
     try:
-        cmds =  {'init', 'echo', 'stream', 'lat,long'}
         arg = argv[1]
         if arg not in cmds:
             raise Exception('invalid command')
@@ -68,28 +79,34 @@ if __name__ == '__main__':
         print(f"commands: {cmds}")
         exit()
 
+    instance = None
+
     try:
 
         if arg == 'init':
             instance = AT(port='/dev/ttyUSB2')
-            instance.initialize_gnss()
-            instance.ser.close()
+            instance.gnss_up()
 
-        elif arg == 'echo' or arg == 'stream':
+        elif arg in {'echo', 'steam'}:
             instance = AT(port='/dev/ttyUSB3')
             while True:
-                response = instance.gnss_params()
-                if response:
-                    if re.match(r"^\d+?\.\d+?$", response.lat) is not None:
-                        print(f"Latitude: {response.latitude:.8f}, Longitude: {response.longitude:.8f}")
-                    else:
-                        print(f'[WARNING: could not parse]: {response}')
+                latlong = instance.gnss_latlong()
+                if latlong:
+                    lat, long = latlong
+                    print(f"Latitude: {lat:.8f}, Longitude: {long:.8f}")
                     if arg == 'echo':
                         break
 
+        elif arg == 'disable':
+            instance = AT(port='/dev/ttyUSB2')
+            instance.gnss_down()
+
     except KeyboardInterrupt:
         print("KeyboardInterrupt received. Cleaning up before exiting.")
-        instance.close()
 
     except Exception as e:
         print(f"An error occurred: {e}")
+
+    finally:
+        if instance:
+            instance.close()

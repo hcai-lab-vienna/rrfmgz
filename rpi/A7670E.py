@@ -68,7 +68,7 @@ class AT:
 
 if __name__ == '__main__':
 
-    cmds =  {'init', 'echo', 'stream', 'disable'}
+    cmds =  {'up', 'echo', 'stream', 'down'}
 
     try:
         arg = argv[1]
@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     try:
 
-        if arg == 'init':
+        if arg == 'up':
             instance = AT(port='/dev/ttyUSB2')
             instance.gnss_up()
 
@@ -97,7 +97,7 @@ if __name__ == '__main__':
                     if arg == 'echo':
                         break
 
-        elif arg == 'disable':
+        elif arg == 'down':
             instance = AT(port='/dev/ttyUSB2')
             instance.gnss_down()
 

@@ -87,7 +87,7 @@ if __name__ == '__main__':
             instance = AT(port='/dev/ttyUSB2')
             instance.gnss_up()
 
-        elif arg in {'echo', 'steam'}:
+        elif arg in {'echo', 'stream'}:
             instance = AT(port='/dev/ttyUSB3')
             while True:
                 latlong = instance.gnss_latlong()

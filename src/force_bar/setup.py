@@ -4,7 +4,7 @@ package_name = 'force_bar'
 
 setup(
     name=package_name,
-    version='0.1.0',
+    version='1.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -15,7 +15,7 @@ setup(
     zip_safe=True,
     maintainer='bernhard',
     maintainer_email='bernhard-hoerl@gmx.at',
-    description='Merger force bar gazebo topics into one',
+    description='Merger force bar gazebo topics into one.',
     license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={

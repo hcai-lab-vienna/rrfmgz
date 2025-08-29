@@ -65,7 +65,8 @@ class AT:
         except serial.SerialException as e:
             raise Exception(f"Error stopping GNSS: {e}")
 
-    def gnss_params(self):
+    @property
+    def gnss_params(self) -> pynmea2.NMEASentence | None:
         try:
             response = str(self.ser.readline(), encoding='utf-8')
             if response.startswith("$GNRMC"):
@@ -75,10 +76,19 @@ class AT:
         except serial.SerialException as e:
             raise Exception(f"Error reading GNSS params: {e}")
 
-    def gnss_latlong(self):
-        response = self.gnss_params()
-        if response and re.match(r"^\d+?\.\d+?$", response.lat):
-            return float(response.latitude), float(response.longitude)
+    @property
+    def gnss_latlongalt(self) -> tuple[float, float, float] | None:
+        msg = self.gnss_params
+        if msg and re.match(r"^\d+?\.\d+?$", msg.lat):
+            return msg.latitude, msg.longitude, msg.altitude
+        else:
+            return None
+
+    @property
+    def gnss_latlong(self) -> tuple[float, float] | None:
+        lla = self.gnss_latlongalt
+        if lla:
+            return lla[:2]
         else:
             return None
 
@@ -111,7 +121,7 @@ if __name__ == '__main__':
         elif arg in {'echo', 'stream'}:
             instance = AT(port='/dev/ttyUSB3')
             while True:
-                latlong = instance.gnss_latlong()
+                latlong = instance.gnss_latlong
                 if latlong:
                     if arg == 'stream':
                         dlat, dlong = latlong_displacement_to_xy_meter(latlong, old_latlong)

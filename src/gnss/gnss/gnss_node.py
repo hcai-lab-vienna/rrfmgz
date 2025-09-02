@@ -41,9 +41,9 @@ class GNSS(Node):
         if latlong:
             self.latlong = latlong
         if self.latlong and self.latlong != self.old_latlong:
+            self.old_latlong = self.latlong
             msg.latitude, msg.longitude = self.latlong
             self.publisher.publish(msg)
-        self.old_latlong = self.latlong
 
 
 def main(args=None):

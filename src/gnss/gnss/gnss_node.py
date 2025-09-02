@@ -16,29 +16,34 @@ class GNSS(Node):
         super().__init__('gnss_serial')
         self.publisher = self.create_publisher(NavSatFix, '/gnss/nav_sat_fix', 10)
         self.timer = self.create_timer(1.0/self.hz, self.timer_callback)
-        self._ser_dat_port = AT(dat_port, baud_rate)
+        self.ser_dat = AT(dat_port, baud_rate)
         if cmd_port == dat_port:
-            self._ser_cmd_port = self._ser_dat_port
+            self.ser_cmd = self.ser_dat
         elif cmd_port:
-            self._ser_cmd_port = AT(cmd_port, baud_rate)
+            self.ser_cmd = AT(cmd_port, baud_rate)
         else:
-            self._ser_cmd_port = None
-        if self._ser_cmd_port:
-            self._ser_cmd_port.gnss_up()
+            self.ser_cmd = None
+        if self.ser_cmd:
+            self.ser_cmd.gnss_up()
+        self.latlong = None
+        self.old_latlong = None
 
     def __del__(self):
-        if self._ser_dat_port:
-            self._ser_dat_port.close()
-        if self._ser_cmd_port:
-            self._ser_cmd_port.close()
+        if self.ser_dat:
+            self.ser_dat.close()
+        if self.ser_cmd:
+            self.ser_cmd.close()
 
     def timer_callback(self):
         msg = NavSatFix()
         msg.header.stamp = self.get_clock().now().to_msg()
-        latlong = self._ser_dat_port.gnss_latlong
+        latlong = self.ser_dat.gnss_latlong
         if latlong:
-            msg.latitude, msg.longitude = latlong
-        self.publisher.publish(msg)
+            self.latlong = latlong
+        if self.latlong and self.latlong != self.old_latlong:
+            msg.latitude, msg.longitude = self.latlong
+            self.publisher.publish(msg)
+        self.old_latlong = self.latlong
 
 
 def main(args=None):

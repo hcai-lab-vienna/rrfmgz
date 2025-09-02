@@ -127,7 +127,6 @@ if __name__ == '__main__':
                         break
                     old_latlong = latlong
 
-
         elif arg == 'down':
             instance = AT(port='/dev/ttyUSB2')
             instance.gnss_down()

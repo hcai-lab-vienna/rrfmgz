@@ -36,7 +36,7 @@ class GNSS(Node):
     def timer_callback(self):
         msg = NavSatFix()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.latitude, msg.longitude, msg.altitude = self._ser_dat_port.gnss_latlongalt
+        msg.latitude, msg.longitude = self._ser_dat_port.gnss_latlong
         self.publisher.publish(msg)
 
 

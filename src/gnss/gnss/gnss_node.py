@@ -43,7 +43,7 @@ class GNSS(Node):
             self.old_latlong = self.latlong
             msg = NavSatFix()
             msg.header.stamp = self.get_clock().now().to_msg()
-            msg.header.frame_id = self.frame_id
+            msg.header.frame_id = str(self.frame_id)
             self.frame_id += 1
             msg.latitude, msg.longitude = self.latlong
             self.publisher.publish(msg)

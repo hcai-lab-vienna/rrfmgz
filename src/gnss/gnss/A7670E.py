@@ -77,12 +77,12 @@ class AT:
             raise Exception(f"Error reading GNSS params: {e}")
 
     @property
-    def gnss_latlong(self) -> tuple[float, float] | None:
+    def gnss_latlong(self) -> tuple[float, float]:
         msg = self.gnss_params
         if msg and re.match(r"^\d+?\.\d+?$", msg.lat):
             return msg.latitude, msg.longitude
         else:
-            return None
+            return 0.0, 0.0
 
     def close(self):
         return self.ser.close()

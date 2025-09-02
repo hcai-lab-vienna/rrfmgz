@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from A7670E import AT
+from gnss.A7670E import AT
 
 import rclpy
 from rclpy.node import Node

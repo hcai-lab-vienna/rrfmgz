@@ -27,6 +27,7 @@ class GNSS(Node):
             self.ser_cmd.gnss_up()
         self.latlong = None
         self.old_latlong = None
+        self.frame_id = 0
 
     def __del__(self):
         if self.ser_dat:
@@ -35,13 +36,15 @@ class GNSS(Node):
             self.ser_cmd.close()
 
     def timer_callback(self):
-        msg = NavSatFix()
-        msg.header.stamp = self.get_clock().now().to_msg()
         latlong = self.ser_dat.gnss_latlong
         if latlong:
             self.latlong = latlong
         if self.latlong and self.latlong != self.old_latlong:
             self.old_latlong = self.latlong
+            msg = NavSatFix()
+            msg.header.stamp = self.get_clock().now().to_msg()
+            msg.header.frame_id = self.frame_id
+            self.frame_id += 1
             msg.latitude, msg.longitude = self.latlong
             self.publisher.publish(msg)
 

@@ -117,7 +117,7 @@ if __name__ == '__main__':
                 if latlong:
                     if arg == 'stream':
                         dlat, dlong = latlong_displacement_to_xy_meter(latlong, old_latlong)
-                        if dlat != 0.0 or dlong !=0.0:
+                        if dlat != 0.0 or dlong != 0.0:
                             print(f"Displacement X (East-West):   {dlat:.8f}")
                             print(f"             Y (North-South): {dlong:.8f}")
                     if latlong != old_latlong:

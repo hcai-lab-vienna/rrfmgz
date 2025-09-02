@@ -32,7 +32,7 @@ class GNSS(Node):
             self._ser_cmd_port.close()
         if self._ser_dat_port:
             self._ser_dat_port.close()
-    
+
     def timer_callback(self):
         msg = NavSatFix()
         msg.header.stamp = self.get_clock().now().to_msg()

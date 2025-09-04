@@ -29,7 +29,7 @@ class AT:
 
     GNSS_STARTING_POSITION:tuple[float, float] = (0.0, 0.0)
 
-    def __init__(self, port='/dev/ttyAMA0', baud_rate=115200):
+    def __init__(self, port:str='/dev/ttyAMA0', baud_rate:int=115200):
         self.port = port
         self.baud_rate = baud_rate
         try:
@@ -37,10 +37,9 @@ class AT:
         except serial.SerialException as e:
             raise Exception(f"Error opening serial connection: {e}")
 
-    def send_at_command(self, command, wait_for_response=True):
+    def send_at_command(self, command:str, wait_for_response:bool=True) -> str | None:
         try:
-            encoded_command = command.encode('utf-8') + b'\r\n'
-            self.ser.write(encoded_command)
+            self.ser.write(command.encode('utf-8') + b'\r\n')
             print(f"Sent command: {command}")
             if wait_for_response:
                 response = self.ser.readlines()[1].decode('utf-8').strip()

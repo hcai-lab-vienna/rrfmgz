@@ -10,14 +10,16 @@ from sensor_msgs.msg import NavSatFix
 
 class GNSS(Node):
 
-    hz:float = 1.0
-
-    def __init__(self, dat_port='/dev/AMA0', cmd_port=None, baud_rate=115200):
+    def __init__(self, dat_port:str='/dev/AMA0', cmd_port:str|bool=False,
+                 baud_rate:int=115200, hz:float=1.0):
         super().__init__('gnss_serial')
         self.publisher = self.create_publisher(NavSatFix, '/gnss/nav_sat_fix', 10)
-        self.timer = self.create_timer(1.0/self.hz, self.timer_callback)
+        self.timer = self.create_timer(1.0/hz, self.timer_callback)
         self.ser_dat = AT(dat_port, baud_rate)
-        if cmd_port == dat_port:
+        # Only connect to command port and start GPS if cmd_port is defined.
+        # It's possible to use the same port for commands and data,
+        # but in practice it doesn't work that great.
+        if cmd_port == dat_port or cmd_port == True:
             self.ser_cmd = self.ser_dat
         elif cmd_port:
             self.ser_cmd = AT(cmd_port, baud_rate)
@@ -25,7 +27,9 @@ class GNSS(Node):
             self.ser_cmd = None
         if self.ser_cmd:
             self.ser_cmd.gnss_up()
-        self.latlong = 0.0, 0.0
+        # Store last successful position measurement.
+        self.latlong = AT.GNSS_STARTING_POSITION
+        # Increment frame_id on a successful measurement.
         self.frame_id = 0
 
     def __del__(self):
@@ -39,9 +43,11 @@ class GNSS(Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = str(self.frame_id)
         latlong = self.ser_dat.gnss_latlong
+        # if successful measurement: update self data
         if latlong:
             self.latlong = latlong
             self.frame_id += 1
+        # only publish self data
         msg.latitude, msg.longitude = self.latlong
         self.publisher.publish(msg)
 

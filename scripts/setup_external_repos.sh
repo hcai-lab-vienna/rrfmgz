@@ -25,7 +25,7 @@ git clone -b ros2 --recurse-submodules https://github.com/ouster-lidar/ouster-ro
 sudo apt install apt-transport-https ros-jazzy-librealsense2*
 sudo mkdir -p /etc/apt/keyrings
 curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp > /dev/null
-echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo `lsb_release -cs` main" sudo tee /etc/apt/sources.list.d/librealsense.list
+echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/librealsense.list
 sudo apt update
 sudo apt install librealsense2-dkms librealsense2-utils librealsense2-dev librealsense2-dbg python3-rosdep
 git clone -b ros2-master https://github.com/IntelRealSense/realsense-ros.git src/realsense-ros

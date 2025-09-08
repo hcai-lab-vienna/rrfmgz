@@ -16,4 +16,4 @@ sudo apt install -y             \
 
 git clone -b ros2 --recurse-submodules https://github.com/ouster-lidar/ouster-ros.git src/ouster-ros
 
-colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-select ouster-ros
+colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-select ouster_ros

@@ -3,6 +3,7 @@
 # https://github.com/ouster-lidar/ouster-ros/tree/ros2
 
 sudo apt install -y             \
+    clang                       \
     ros-$ROS_DISTRO-pcl-ros     \
     ros-$ROS_DISTRO-tf2-eigen   \
     ros-$ROS_DISTRO-rviz2       \
@@ -16,4 +17,4 @@ sudo apt install -y             \
 
 git clone -b ros2 --recurse-submodules https://github.com/ouster-lidar/ouster-ros.git src/ouster-ros
 
-colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+colcon build --executor sequential --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++

@@ -84,6 +84,41 @@
   <xacro:wheel N='back_left'   T='1' X='${(-wheel_base/2)}' Y='${(wheel_separation/2)}'  Z='-0.0702' r='0.0'   p='0.0' y='0.0'/>
   <xacro:wheel N='back_right'  T='2' X='${(-wheel_base/2)}' Y='${(-wheel_separation/2)}' Z='-0.0702' r='${pi}' p='0.0' y='0.0'/>
 
+  <!-- visual connection -->
+
+  <xacro:macro name="force_bar_material">
+    <material>
+      <ambient>0.25 0.25 0.25 1.0</ambient>
+      <diffuse>0.25 0.25 0.25 1.0</diffuse>
+      <specular>0.25 0.25 0.25 1.0</specular>
+    </material>
+  </xacro:macro>
+
+  <xacro:macro name="force_bar_connection_visual" params="N X Y Z r p y L W H">
+    <visual name='force_bar_connection_visual_${N}'>
+      <pose relative_to="chassis">${X} ${Y} ${Z} ${r} ${p} ${y}</pose>
+      <geometry>
+        <box>
+          <size>${L} ${W} ${H}</size>
+        </box>
+      </geometry>
+      <xacro:force_bar_material/>
+    </visual>
+  </xacro:macro>
+
+  <link name='force_bar_connection_visual'>
+    <xacro:force_bar_connection_visual N='center_bar_left'  X='0.4'    Y='0.04'   Z='0' r='0' p='0' y='0'        L='0.2'   W='0.025' H='0.025'/>
+    <xacro:force_bar_connection_visual N='center_bar_right' X='0.4'    Y='-0.04'  Z='0' r='0' p='0' y='0'        L='0.2'   W='0.025' H='0.025'/>
+    <xacro:force_bar_connection_visual N='front_bar_top'    X='0.4875' Y='0'      Z='0' r='0' p='0' y='0'        L='0.025' W='0.41'  H='0.025'/>
+    <xacro:force_bar_connection_visual N='front_bar_left'   X='0.4575' Y='0.265'  Z='0' r='0' p='0' y='0.43633'  L='0.025' W='0.15'  H='0.025'/>
+    <xacro:force_bar_connection_visual N='front_bar_right'  X='0.4575' Y='-0.265' Z='0' r='0' p='0' y='-0.43633' L='0.025' W='0.15'  H='0.025'/>
+  </link>
+  <joint name='force_bar_connection_visual_joint' type='fixed'>
+    <pose relative_to='force_bar_connection_visual'/>
+    <parent>chassis</parent>
+    <child>force_bar_connection_visual</child>
+  </joint>
+
   <!-- sensor bar -->
 
   <xacro:macro name="force_bar_segment" params="P X Y Z r p y L W H">
@@ -98,11 +133,7 @@
             <size>${L} ${W} ${H}</size>
           </box>
         </geometry>
-        <material>
-          <ambient>0.5 0.5 0.5 0.5</ambient>
-          <diffuse>0.5 0.5 0.5 0.5</diffuse>
-          <specular>0.5 0.5 0.5 0.5</specular>
-        </material>
+        <xacro:force_bar_material/>
       </visual>
       <collision name='collision'>
         <geometry>

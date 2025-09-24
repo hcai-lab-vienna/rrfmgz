@@ -1,8 +1,0 @@
-<launch>
-  <executable cmd="gz sim worlds/scout_in_a_box_with_trees.sdf"/>
-  <ros_gz_bridge
-    bridge_name="ros_gz_bridge"
-    config_file="config/bridges.yaml">
-  </ros_gz_bridge>
-  <node pkg="force_bar" exec="force_bar_node"/>
-</launch>

@@ -1,4 +1,0 @@
-<launch>
-  <node pkg="gnss" exec="gnss_node"/>
-  <!-- <node pkg="ouster_ros" exec="...."/> -->
-</launch>

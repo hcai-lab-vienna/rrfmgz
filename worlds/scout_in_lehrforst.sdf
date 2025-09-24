@@ -27,7 +27,7 @@
 
 
   <light type="directional" name="sun">
-    <cast_shadows>false</cast_shadows>
+    <cast_shadows>true</cast_shadows>
     <pose>0 0 10 0 0 0</pose>
     <diffuse>0.8 0.8 0.8 1</diffuse>
     <specular>0.2 0.2 0.2 1</specular>
@@ -56,7 +56,7 @@
     </include>
   </model>
 
-  <model name="center_pillar">
+  <!-- <model name="center_pillar">
     <static>true</static>
     <link name='center'>
       <pose>0.0 0.0 0.0 3.14159 0 0</pose>
@@ -74,7 +74,7 @@
         </material>
       </visual>
     </link>
-  </model>
+  </model> -->
 
 </world>
 

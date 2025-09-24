@@ -7,7 +7,7 @@ import os
 model_path = os.path.dirname(__file__)
 
 # area in which trees will be loaded
-x_min = 15
+x_min = 10
 x_max = 70
 y_min = -30
 y_max = 30
@@ -45,13 +45,13 @@ for i, line in enumerate(lines[1:]):
     radius = round(w * 0.005, 3) # convert from cm (/100) and diamater (/2)
     SDF +=f"""
   <link name='tree_{i+1:0>4}'>
-    <pose>{x} {y} {z} {tree_rotation} 0 0</pose>
-    <visual name='visual'>
+    <visual name='tree_{i+1:0>4}_trunk'>
+      <pose>{x} {y} {z} {tree_rotation} 0 0</pose>
       <geometry>
-        <cylinder>
-          <radius>{radius:.3f}</radius>
+        <cone>
+          <radius>{2*radius:.3f}</radius>
           <length>{tree_hight_factor*radius:.3f}</length>
-        </cylinder>
+        </cone>
       </geometry>
       <material>
         <ambient>0.42 0.29 0.19 1</ambient>
@@ -59,12 +59,26 @@ for i, line in enumerate(lines[1:]):
         <specular>0.42 0.29 0.19 1</specular>
       </material>
     </visual>
-    <collision name='collision'>
+    <visual name='tree_{i+1:0>4}_leaves'>
+      <pose>{x} {y} {z-tree_hight_factor*radius/2} {tree_rotation} 0 0</pose>
       <geometry>
-        <cylinder>
-          <radius>{radius:.3f}</radius>
+        <sphere>
+          <radius>{5*radius:.3f}</radius>
+        </sphere>
+      </geometry>
+      <material>
+        <ambient>0.14 0.40 0.07 1</ambient>
+        <diffuse>0.14 0.40 0.07 1</diffuse>
+        <specular>0.14 0.40 0.07 1</specular>
+      </material>
+    </visual>
+    <collision name='tree_{i+1:0>4}_collision'>
+      <pose>{x} {y} {z} {tree_rotation} 0 0</pose>
+      <geometry>
+        <cone>
+          <radius>{2*radius:.3f}</radius>
           <length>{tree_hight_factor*radius:.3f}</length>
-        </cylinder>
+        </cone>
       </geometry>
     </collision>
   </link>

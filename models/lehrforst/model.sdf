@@ -12,13 +12,11 @@
 
   <static>true</static>
 
-
   <include>
     <uri>models/lehrforst_ground</uri>
     <name>ground_plane</name>
     <pose>0 0 0 0 3.14159 0</pose>
   </include>
-
 
   <include>
     <uri>models/lehrforst_trees</uri>

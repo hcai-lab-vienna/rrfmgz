@@ -16,7 +16,7 @@ def plot_trees(file_path):
             tmp = line.split(',')
             tree_x.append(-(float(tmp[0])-42))
             tree_y.append(float(tmp[1]))
-            sizes.append(abs(int(float(tmp[2])*500)))
+            sizes.append(int(float(tmp[3])*10))
     plt.scatter(tree_x, tree_y, c='green', s=sizes, marker='^', zorder=5)
 
 

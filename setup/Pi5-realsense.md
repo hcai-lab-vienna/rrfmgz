@@ -222,12 +222,12 @@ chmod +x stream_rtsp.py
 
 ## Troubleshooting
 
-* \`\`
+* **Issue with setup.py**
 
   * Ensure `_version.py` and `pyrealsense2.so` are in the installed package folder.
   * Remove any `.egg` installs before `setup.py install`.
 
-* \*\*FFmpeg \*\*\`\`
+* **FFmpeg**
 
   * Make sure `rtsp-simple-server` is running and listening on port 8554.
 

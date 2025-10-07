@@ -1,6 +1,6 @@
 # rrfmgz
 
-Random Robot Forest Motion GaZebo (name will be changed in the future)
+Random Robot Forest Motion GaZebo (name will be changed in the future!)
 
 # TODO project
 

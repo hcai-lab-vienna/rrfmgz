@@ -2,7 +2,11 @@
 
 Adapted from: [dannyh147/Pi5-realsense](https://github.com/dannyh147/Pi5-realsense) for Python 3.12
 
-This README guides you through setting up the Intel RealSense SDK (librealsense) and Python wrapper on a Raspberry Pi 5 (64‑bit Raspberry Pi OS) with Python 3.12, and streaming both infrared cameras as separate RTSP feeds using **rtsp-simple-server** (MediaMTX) and **FFmpeg**.
+> After installation of librealsense and pyrealsense follow:
+> [Install ROS Wrapper for Intel® RealSense™ cameras ](https://github.com/IntelRealSense/realsense-ros?tab=readme-ov-file#option-2-install-from-source)
+> (*Installation on Ubuntu > Step 3: Install ROS Wrapper for Intel® RealSense™ cameras > Option 2: Install from source*)
+
+This README guides you through setting up the Intel RealSense SDK (librealsense) and Python wrapper on a Raspberry Pi 5 (64‑bit Raspberry Pi OS) with Python 3.12.
 
 ---
 

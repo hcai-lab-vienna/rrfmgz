@@ -33,7 +33,7 @@ Random Robot Forest Motion GaZebo (name will be changed in the future!)
 Integrate the sensor and robot ros control into the platform computer (currently a Raspberry Pi 5).
 
 - [x] GNSS
-- [ ] IMU
+- [ ] IMU (maybe use IMU of ZED camera)
 - [ ] integrate integrated robot odometry (requires repaired robot)
 - [ ] stereo microphone (ReSpeaker 2-Mic Pi HAT V1.0)
 - [ ] and setup Pi Zero W for it (if needed)

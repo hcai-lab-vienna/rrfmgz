@@ -27,6 +27,7 @@ Random Robot Forest Motion GaZebo (name will be changed in the future!)
 - [x] make simulation pretty
 - [x] live plot of robot position (in `plot_robot_path.py` under scripts)
 - [ ] maybe integrate real bumper (or load cell) into simulation for testing and calibrating
+- [ ] make system for planning a path with fixed scann positions
 
 # TODO real robot
 

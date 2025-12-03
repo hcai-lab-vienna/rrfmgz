@@ -45,10 +45,10 @@ Integrate the sensor and robot ros control into the platform computer (currently
 - [ ] RoboSense LiDAR (maybe)
 - [x] Intel Realsense (Stereo Camera)
 - [ ] ZED Stereo Camera (if possible) -- Džemail
-- [ ] test implementation of a Gauge Load Cell (optional, playing around with it)
-- [ ] setup Arduinos for bumper (for the start with the test implementation above)
-- [ ] THE BUMPER -- wait until first segment is build by Florian
-- [ ] repair SCOUT -- Florian (thanks)
+- [x] test implementation of a Gauge Load Cell (optional, playing around with it)
+- [x] setup Arduinos for bumper (for the start with the test implementation above)
+- [x] THE BUMPER -- wait until first segment is build by Florian
+- [x] repair SCOUT -- Florian (thanks)
 - [ ] SteamDeck controller for all sensors and robot controls
 
 # TODO RIEGL (side) project

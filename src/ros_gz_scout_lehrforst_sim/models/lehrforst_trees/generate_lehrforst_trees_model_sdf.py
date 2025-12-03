@@ -9,7 +9,7 @@ import math
 model_path = os.path.dirname(__file__)
 
 # wether to use nice tree models or not
-fancy = True
+fancy = False
 
 # area in which trees will be loaded
 x_min = 10

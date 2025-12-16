@@ -80,7 +80,7 @@ def main(args=None):
     If no args are provided the last file in data folder
     will be plotted.
     """
-    animate = False
+    animate = True
     robot_data_path = sorted(glob("data/recored_positions_*_*.csv"))[-1]
     if args and len(args) >= 2:
         args = args[1:]

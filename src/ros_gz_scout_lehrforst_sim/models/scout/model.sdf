@@ -9,7 +9,7 @@
     <link name="chassis">
       <pose relative_to="__model__">0 0 1 0 0 0</pose>
       <inertial auto="true">
-        <mass>50</mass>
+        <mass>67</mass>
       </inertial>
       <visual name="visual">
         <geometry>

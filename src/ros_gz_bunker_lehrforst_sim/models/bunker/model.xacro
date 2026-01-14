@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <sdf version="1.10" xmlns:xacro="http://ros.org/wiki/xacro">
 
-<model name='bunker' canonical_link='chassis'>
+<model name='bunker' canonical_link='base_link'>
 
   <xacro:property name="update_rate_odom"      value="1"/>
   <xacro:property name="update_rate_imu"       value="1"/>
@@ -11,8 +11,21 @@
 
   <!-- base_link -->
 
-  <link name='chassis'>
-    <pose relative_to='__model__'>0 0 1 0 0 0</pose>
+  <link name='base_link'>
+    <pose>0.021241 0.004755 -0.127581 0 0 0</pose>
+    <inertial auto="true">
+      <mass>130</mass>
+    </inertial>
+    <visual name='visual'>
+      <geometry>
+        <mesh><uri>meshes/BUNKER.STL</uri></mesh>
+      </geometry>
+    </visual>
+    <collision name='collision'>
+      <geometry>
+        <mesh><uri>meshes/BUNKER.STL</uri></mesh>
+      </geometry>
+    </collision>
     <sensor name="imu_sensor" type="imu">
       <always_on>true</always_on>
       <update_rate>${update_rate_imu}</update_rate>
@@ -23,13 +36,60 @@
 
   <!-- wheels -->
 
+  <xacro:macro name="wheel" params="N m X Y Z r p y">
+    <link name="wheel${N}_Link">
+      <pose relative_to="base_link">${X} ${Y} ${Z} ${r} ${p} ${y}</pose>
+      <inertial auto="true">
+        <mass>${m}</mass>
+      </inertial>
+      <visual name='visual'>
+        <geometry>
+          <mesh><uri>meshes/wheel${N}_Link.STL</uri></mesh>
+        </geometry>
+      </visual>
+      <collision name='collision'>
+        <geometry>
+          <mesh><uri>meshes/wheel${N}_Link.STL</uri></mesh>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="wheel${N}_joint" type="revolute">
+      <pose relative_to='wheel${N}_Link'/>
+      <parent>base_link</parent>
+      <child>wheel${N}_Link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+      </axis>
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel N='1'   m='2' X='0.44403' Y='0.3495' Z='-0.12853' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='1.1' m='1' X='0.37551' Y='0.3495' Z='-0.22305' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='1.2' m='1' X='0.29039' Y='0.3495' Z='-0.28104' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='1.3' m='1' X='0.29603' Y='0.3495' Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
+
+  <xacro:wheel N='2'   m='2' X='0.44403' Y='-0.3495' Z='-0.12853' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='2.1' m='1' X='0.37551' Y='-0.3495' Z='-0.22305' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='2.2' m='1' X='0.29039' Y='-0.3495' Z='-0.28104' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='2.3' m='1' X='0.29603' Y='-0.3495' Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
+
+  <xacro:wheel N='3'   m='8' X='-0.38871' Y='0.295'  Z='-0.19381' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='3.1' m='1' X='-0.23111' Y='0.3495' Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='3.2' m='1' X='0.043885' Y='0.3495' Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='3.3' m='1' X='-0.28597' Y='0.3495' Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
+
+  <xacro:wheel N='4'   m='8' X='-0.38871' Y='-0.295'  Z='-0.19381' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='4.1' m='1' X='-0.23111' Y='-0.3495' Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='4.2' m='1' X='0.043885' Y='-0.3495' Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='4.3' m='1' X='-0.28597' Y='-0.3495' Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
+
   <!-- plugins -->
 
-  <plugin
-    filename="gz-sim-DRIVE_SYSTEM"
-    name="gz::sim::systems::DRIVE_SYSTEM">
-    <topic>cmd_vel</topic>
-  </plugin>
+  <!-- TODO: Drive System -->
 
   <xacro:macro name="keymap" params="D L A">
     <plugin

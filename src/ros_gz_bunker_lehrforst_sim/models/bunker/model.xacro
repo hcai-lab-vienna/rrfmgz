@@ -12,18 +12,36 @@
   <!-- base_link -->
 
   <link name='base_link'>
-    <pose>0.021241 0.004755 -0.127581 0 0 0</pose>
+    <pose relative_to='__model__'>0 0 1 0 0 0</pose>
     <inertial auto="true">
       <mass>130</mass>
     </inertial>
     <visual name='visual'>
       <geometry>
-        <mesh><uri>meshes/BUNKER.STL</uri></mesh>
+        <mesh><uri>meshes/base_link.STL</uri></mesh>
       </geometry>
+      <material>
+        <ambient>0.25 0.25 0.25 1.0</ambient>
+        <diffuse>0.25 0.25 0.25 1.0</diffuse>
+        <specular>0.25 0.25 0.25 1.0</specular>
+      </material>
+    </visual>
+    <visual name='visual2'>
+      <geometry>
+        <mesh><uri>meshes/base2_Link.STL</uri></mesh>
+      </geometry>
+      <material>
+        <ambient>0.75 0.75 0.75 1.0</ambient>
+        <diffuse>0.75 0.75 0.75 1.0</diffuse>
+        <specular>0.75 0.75 0.75 1.0</specular>
+      </material>
     </visual>
     <collision name='collision'>
+      <pose>0 0 -0.15 0 0 0</pose>
       <geometry>
-        <mesh><uri>meshes/BUNKER.STL</uri></mesh>
+        <box>
+          <size>0.95 0.4 0.2</size>
+        </box>
       </geometry>
     </collision>
     <sensor name="imu_sensor" type="imu">
@@ -36,20 +54,30 @@
 
   <!-- wheels -->
 
-  <xacro:macro name="wheel" params="N m X Y Z r p y">
+  <xacro:macro name="wheel" params="N m R W P X Y Z r p y">
     <link name="wheel${N}_Link">
       <pose relative_to="base_link">${X} ${Y} ${Z} ${r} ${p} ${y}</pose>
       <inertial auto="true">
         <mass>${m}</mass>
       </inertial>
       <visual name='visual'>
+        <pose relative_to="base_link">${X} ${Y+P} ${Z} ${r} ${p} ${y}</pose>
         <geometry>
           <mesh><uri>meshes/wheel${N}_Link.STL</uri></mesh>
         </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1.0</ambient>
+          <diffuse>0.5 0.5 0.5 1.0</diffuse>
+          <specular>0.5 0.5 0.5 1.0</specular>
+        </material>
       </visual>
       <collision name='collision'>
+        <pose relative_to="base_link">${X} ${Y+P} ${Z} ${r} ${p} ${y}</pose>
         <geometry>
-          <mesh><uri>meshes/wheel${N}_Link.STL</uri></mesh>
+          <cylinder>
+            <radius>${R}</radius>
+            <length>${W}</length>
+          </cylinder>
         </geometry>
       </collision>
     </link>
@@ -67,25 +95,22 @@
     </joint>
   </xacro:macro>
 
-  <xacro:wheel N='1'   m='2' X='0.44403' Y='0.3495' Z='-0.12853' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='1.1' m='1' X='0.37551' Y='0.3495' Z='-0.22305' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='1.2' m='1' X='0.29039' Y='0.3495' Z='-0.28104' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='1.3' m='1' X='0.29603' Y='0.3495' Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
-
-  <xacro:wheel N='2'   m='2' X='0.44403' Y='-0.3495' Z='-0.12853' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='2.1' m='1' X='0.37551' Y='-0.3495' Z='-0.22305' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='2.2' m='1' X='0.29039' Y='-0.3495' Z='-0.28104' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='2.3' m='1' X='0.29603' Y='-0.3495' Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
-
-  <xacro:wheel N='3'   m='8' X='-0.38871' Y='0.295'  Z='-0.19381' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='3.1' m='1' X='-0.23111' Y='0.3495' Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='3.2' m='1' X='0.043885' Y='0.3495' Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='3.3' m='1' X='-0.28597' Y='0.3495' Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
-
-  <xacro:wheel N='4'   m='8' X='-0.38871' Y='-0.295'  Z='-0.19381' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='4.1' m='1' X='-0.23111' Y='-0.3495' Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='4.2' m='1' X='0.043885' Y='-0.3495' Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
-  <xacro:wheel N='4.3' m='1' X='-0.28597' Y='-0.3495' Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='1'   R='0.05'  W='0.05' P='-0.075' m='2' X='0.44403'  Y='0.3495'  Z='-0.12853' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='1.1' R='0.04'  W='0.05' P='-0.075' m='1' X='0.37551'  Y='0.3495'  Z='-0.22305' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='1.2' R='0.05'  W='0.05' P='-0.075' m='1' X='0.29039'  Y='0.3495'  Z='-0.28104' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='1.3' R='0.05'  W='0.05' P='-0.075' m='1' X='0.29603'  Y='0.3495'  Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='2'   R='0.05'  W='0.05' P='0.075'  m='2' X='0.44403'  Y='-0.3495' Z='-0.12853' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='2.1' R='0.04'  W='0.05' P='0.075'  m='1' X='0.37551'  Y='-0.3495' Z='-0.22305' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='2.2' R='0.05'  W='0.05' P='0.075'  m='1' X='0.29039'  Y='-0.3495' Z='-0.28104' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='2.3' R='0.05'  W='0.05' P='0.075'  m='1' X='0.29603'  Y='-0.3495' Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='3'   R='0.075' W='0.05' P='0'      m='8' X='-0.38871' Y='0.295'   Z='-0.19381' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='3.1' R='0.05'  W='0.05' P='-0.075' m='1' X='-0.23111' Y='0.3495'  Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='3.2' R='0.05'  W='0.05' P='-0.075' m='1' X='0.043885' Y='0.3495'  Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='3.3' R='0.05'  W='0.05' P='-0.075' m='1' X='-0.28597' Y='0.3495'  Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='4'   R='0.075' W='0.05' P='0'      m='8' X='-0.38871' Y='-0.295'  Z='-0.19381' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='4.1' R='0.05'  W='0.05' P='0.075'  m='1' X='-0.23111' Y='-0.3495' Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='4.2' R='0.05'  W='0.05' P='0.075'  m='1' X='0.043885' Y='-0.3495' Z='-0.27671' r='1.5708' p='0.0' y='-3.1416'/>
+  <xacro:wheel N='4.3' R='0.05'  W='0.05' P='0.075'  m='1' X='-0.28597' Y='-0.3495' Z='-0.087'   r='1.5708' p='0.0' y='-3.1416'/>
 
   <!-- plugins -->
 

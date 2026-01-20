@@ -1,6 +1,3 @@
-[submodule "src/ros_gz_bunker_lehrforst_sim"]
-	path = src/ros_gz_bunker_lehrforst_sim
-	url = git@github.com:hcai-lab-vienna/ros_gz_bunker_lehrforst_sim.git
 [submodule "src/ros_gz_scout_lehrforst_sim"]
 	path = src/ros_gz_scout_lehrforst_sim
 	url = git@github.com:hcai-lab-vienna/ros_gz_scout_lehrforst_sim.git

@@ -1,11 +1,3 @@
-# rrfmgz
-
-Random Robot Forest Motion GaZebo (name will be changed in the future!)
-
-# TODO project
-
-- [ ] rename repo
-
 # TODO simulation
 
 - [x] create lehrforst with selection of trees
@@ -15,8 +7,6 @@ Random Robot Forest Motion GaZebo (name will be changed in the future!)
 - [x] build simulation border
 - [x] set border with coordinates in software not with shape in gz
 - [x] build an "advanced algorithm"
-- [ ] detect crash when driving backwards (just for tracking if robot would be damaged)
-- [ ] (and/or) build back bumper and adapt in software
 - [x] record map with collisions (!)
 - [x] improve tracking and recording
 - [x] implement angle of tree inclination in model
@@ -26,8 +16,9 @@ Random Robot Forest Motion GaZebo (name will be changed in the future!)
 - [x] make real launch files
 - [x] make simulation pretty
 - [x] live plot of robot position (in `plot_robot_path.py` under scripts)
-- [ ] maybe integrate real bumper (or load cell) into simulation for testing and calibrating
-- [ ] make system for planning a path with fixed scann positions
+- [ ] integrate real bumper into simulation for testing and calibrating
+- [ ] merge bunker and scout repo
+- [ ] setup model folder
 
 # TODO real robot
 
@@ -51,16 +42,19 @@ Integrate the sensor and robot ros control into the platform computer (currently
 - [x] repair SCOUT -- Florian (thanks)
 - [ ] SteamDeck controller for all sensors and robot controls
 
-# TODO RIEGL (side) project
+# TODO RIEGL project
 
 Project with Christoph Gollob and his team about combining his LiDAR with our robots (big bunker probably).
 The main goal of the combination is planning and scanning a predefined path (or a recorded path) in the forest
 where on fixed locations a LiDAR scan from the RIEGL sensor will be made (stop and go).
 Autonomous forest navigation is a big keypoint here, even if the path is predefined (navigating everchanging
 forest is difficult).
+Repository: [hcai-lab-vienna/riegl_control](https://github.com/hcai-lab-vienna/riegl_control)
 
 - [ ] Get big Bunker working with ros and the Pi5 (CAN bus)
 - [x] record movement and play back (rosbag)
 - [ ] navigate robot just with odom (see `move_robot_wo_tf.py` in scripts)
 - [ ] make system for planning a path with fixed scann positions
 - [ ] and driving that path
+- [ ] nav2
+- [ ] add second LiDAR for navigation (Ouster/Helios)

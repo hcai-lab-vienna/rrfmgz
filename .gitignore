@@ -65,3 +65,5 @@ bag
 os-*-metadata.json
 **/bunker_description
 **/bunker_gazebo_sim
+.zed
+.devcontainer

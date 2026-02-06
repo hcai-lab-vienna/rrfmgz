@@ -89,7 +89,7 @@ def main(args=None):
                 animate = True
             else:
                 robot_data_path = args[i]
-    tree_data_path = "install/ros_gz_scout_lehrforst_sim/share/ros_gz_scout_lehrforst_sim/models/lehrforst_trees/tree_position_filtered.csv"
+    tree_data_path = "install/ros_gz_lehrforst_sim/share/ros_gz_lehrforst_sim/models/lehrforst_trees/tree_position_filtered.csv"
     if animate:
         anim_plot(robot_data_path, tree_data_path)
     else:

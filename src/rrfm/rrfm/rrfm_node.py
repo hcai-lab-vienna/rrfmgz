@@ -79,9 +79,7 @@ class RandomRobotForestMotion(Node):
         self.collision = self.create_subscription(
             String, "/merged_force_topic", self.collision_callback, 10
         )
-        self.pose = self.create_subscription(
-            Pose, "/scout/pose", self.pose_callback, 10
-        )
+        self.pose = self.create_subscription(Pose, "/pose", self.pose_callback, 10)
         # for each run a day create a new save file
         if self.record:
             base_str = f"data/recored_positions_{datetime.now().strftime(r'%y%m%d')}_"

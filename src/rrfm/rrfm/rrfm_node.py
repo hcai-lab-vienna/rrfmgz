@@ -50,11 +50,23 @@ def normalize_angle(angle: float) -> float:
 
 
 class RandomRobotForestMotion(Node):
-    segment_thresholds: list[float] = [200, 200, 200, 200, 200]
-    box_size: tuple[float, float] = (40.0, 40.0)
-    record: bool = True
-    recover_from_stand_still: bool = True
-    always_random_rotation: bool = True
+    random.seed(os.environ.get("RRFM_SEED", default=None))
+    segment_thresholds: list[float] = [
+        float(x)
+        for x in os.environ.get(
+            "RRFM_SEGMENT_THRESHOLDS", default="200,200,200,200,200"
+        ).split(",")
+    ]
+    box_size: list[float] = [
+        float(x) for x in os.environ.get("RRFM_BOX_SIZE", default="40,40").split(",")
+    ]
+    record: bool = os.environ.get("RRFM_RECORD", default="1") == "1"
+    recover_from_stand_still: bool = (
+        os.environ.get("RRFM_RECOVER_FROM_STAND_STILL", default="1") == "1"
+    )
+    always_random_rotation: bool = (
+        os.environ.get("RRFM_ALWAYS_RANDOM_ROTATION", default="0") == "1"
+    )
 
     def __init__(self):
         super().__init__("random_robot_forest_motion")
@@ -229,7 +241,6 @@ class RandomRobotForestMotion(Node):
 
 
 def main(args=None):
-    random.seed(os.environ.get("RRFM_SEED", default=None))
     rclpy.init(args=args)
     node = RandomRobotForestMotion()
     rclpy.spin(node)

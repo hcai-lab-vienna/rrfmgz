@@ -88,8 +88,9 @@ def anim_plot(robot_data_path, tree_data_path):
     ax.set_ylim([-25, 25])
     anim = animation.FuncAnimation(fig, animate, repeat=True, interval=1000)
     configs = get_configs(robot_data_path)
-    title = f"SEED={configs['RRFM_SEED']}\n"
-    title += f"ALWAYS_RANDOM_ROTATION={configs['RRFM_ALWAYS_RANDOM_ROTATION']}"
+    title = f"SEED={configs['RRFM_SEED']}   "
+    title += f"ALWAYS_RANDOM_ROTATION={configs['RRFM_ALWAYS_RANDOM_ROTATION']}   "
+    title += f"DURATION={configs['RRFM_TTL']}s   "
     plt.title(title)
     plt.show()
     return anim

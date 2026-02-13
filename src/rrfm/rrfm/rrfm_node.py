@@ -58,6 +58,7 @@ class RandomRobotForestMotion(Node):
         "RRFM_RECORD": "1",
         "RRFM_RECOVER_FROM_STAND_STILL": "1",
         "RRFM_ALWAYS_RANDOM_ROTATION": "0",
+        "RRFM_TTL": "0.0",
     }
 
     def __init__(self):
@@ -65,6 +66,7 @@ class RandomRobotForestMotion(Node):
         self.E = dict()
         for key, val in self.DEFAULT_ENVIRONMENT_VARIABLES.items():
             self.E[key] = os.environ.get(key, default=val)
+            self.get_logger().info(f"{key}={self.E[key]}")
         random.seed(self.E["RRFM_SEED"])
         self.segment_thresholds = [
             float(x) for x in self.E["RRFM_SEGMENT_THRESHOLDS"].split(",")
@@ -73,6 +75,9 @@ class RandomRobotForestMotion(Node):
         self.record = self.E["RRFM_RECORD"] == "1"
         self.recover_from_stand_still = self.E["RRFM_RECOVER_FROM_STAND_STILL"] == "1"
         self.always_random_rotation = self.E["RRFM_ALWAYS_RANDOM_ROTATION"] == "1"
+        self.ttl = float(self.E["RRFM_TTL"])
+        if self.ttl > 1.0:
+            self.shutdown_timer = self.create_timer(self.ttl, self.shutdown_callback)
         # command_stack will be executed by the robot from top to bottom,
         # each command is a tuple of (linear speed, angular speed, duration in seconds).
         self.command_stack = []
@@ -109,6 +114,12 @@ class RandomRobotForestMotion(Node):
                 for key, value in self.E.items():
                     header += f"{key}={value};"
                 f.write(header)
+
+    def shutdown_callback(self):
+        self.get_logger().info(f"Shutting down after {self.ttl} seconds.")
+        self.shutdown_timer.cancel()
+        self.destroy_node()
+        exit()
 
     def collision_commands(self, sn: int = 3) -> list[tuple]:
         "motion routine when collision happens"
@@ -182,12 +193,10 @@ class RandomRobotForestMotion(Node):
         return_val = False
         if abs(val) > threshold:
             log_msg = f"COLL sn:{sn} val:{val:.2f}"
-            if self.immediate_collision:
-                log_msg += " (ignored)"
-            else:
+            if not self.immediate_collision:
                 self.set_immediate_collision()
                 return_val = True
-            self.get_logger().info(log_msg)
+                self.get_logger().info(log_msg)
         return return_val
 
     def detect_wall(self) -> bool:
@@ -198,11 +207,9 @@ class RandomRobotForestMotion(Node):
             or abs(self.pose[1]) >= self.box_size[1] / 2
         ):
             log_msg = f"WALL pose_x:{self.pose[0]:.2f} pose_y:{self.pose[1]:.2f} yaw:{self.yaw:.2f}"
-            if self.command_stack:
-                log_msg += " (ignored)"
-            else:
+            if not self.command_stack:
                 return_val = True
-            self.get_logger().info(log_msg)
+                self.get_logger().info(log_msg)
             # set out of bounds check
             self.out_of_bounds = True
         else:

@@ -50,26 +50,29 @@ def normalize_angle(angle: float) -> float:
 
 
 class RandomRobotForestMotion(Node):
-    random.seed(os.environ.get("RRFM_SEED", default=None))
-    segment_thresholds: list[float] = [
-        float(x)
-        for x in os.environ.get(
-            "RRFM_SEGMENT_THRESHOLDS", default="200,200,200,200,200"
-        ).split(",")
-    ]
-    box_size: list[float] = [
-        float(x) for x in os.environ.get("RRFM_BOX_SIZE", default="40,40").split(",")
-    ]
-    record: bool = os.environ.get("RRFM_RECORD", default="1") == "1"
-    recover_from_stand_still: bool = (
-        os.environ.get("RRFM_RECOVER_FROM_STAND_STILL", default="1") == "1"
-    )
-    always_random_rotation: bool = (
-        os.environ.get("RRFM_ALWAYS_RANDOM_ROTATION", default="0") == "1"
-    )
+    # ENV_VAR: default_value
+    DEFAULT_ENVIRONMENT_VARIABLES = {
+        "RRFM_SEED": None,
+        "RRFM_SEGMENT_THRESHOLDS": "200,200,200,200,200",
+        "RRFM_BOX_SIZE": "40,40",
+        "RRFM_RECORD": "1",
+        "RRFM_RECOVER_FROM_STAND_STILL": "1",
+        "RRFM_ALWAYS_RANDOM_ROTATION": "0",
+    }
 
     def __init__(self):
         super().__init__("random_robot_forest_motion")
+        self.E = dict()
+        for key, val in self.DEFAULT_ENVIRONMENT_VARIABLES.items():
+            self.E[key] = os.environ.get(key, default=val)
+        random.seed(self.E["RRFM_SEED"])
+        self.segment_thresholds = [
+            float(x) for x in self.E["RRFM_SEGMENT_THRESHOLDS"].split(",")
+        ]
+        self.box_size = [float(x) for x in self.E["RRFM_BOX_SIZE"].split(",")]
+        self.record = self.E["RRFM_RECORD"] == "1"
+        self.recover_from_stand_still = self.E["RRFM_RECOVER_FROM_STAND_STILL"] == "1"
+        self.always_random_rotation = self.E["RRFM_ALWAYS_RANDOM_ROTATION"] == "1"
         # command_stack will be executed by the robot from top to bottom,
         # each command is a tuple of (linear speed, angular speed, duration in seconds).
         self.command_stack = []
@@ -101,6 +104,11 @@ class RandomRobotForestMotion(Node):
             else:
                 file_nr = 1
             self.save_file = base_str + f"{file_nr:03d}.csv"
+            with open(self.save_file, "w") as f:
+                header = "#"
+                for key, value in self.E.items():
+                    header += f"{key}={value};"
+                f.write(header)
 
     def collision_commands(self, sn: int = 3) -> list[tuple]:
         "motion routine when collision happens"

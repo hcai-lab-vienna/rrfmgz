@@ -11,11 +11,10 @@ def get_configs(file_path):
     configs = dict()
     with open(file_path, "r") as f:
         header = f.readline()
-        if header.startswith("#"):
-            header = header.replace("#", "").split(";")[:-1]
-            for pair in header:
-                key, val = pair.split("=")
-                configs[key] = val
+        header = header.replace("#", "").strip().split(";")[:-1]
+        for pair in header:
+            key, val = pair.split("=")
+            configs[key] = val
     return configs
 
 

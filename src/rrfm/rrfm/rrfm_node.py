@@ -113,6 +113,7 @@ class RandomRobotForestMotion(Node):
                 header = "#"
                 for key, value in self.E.items():
                     header += f"{key}={value};"
+                header += "\n"
                 f.write(header)
 
     def shutdown_callback(self):

@@ -6,7 +6,7 @@ from sys import argv
 import numpy as np
 from matplotlib import pyplot as plt
 
-SCAN_RADIUS = 3
+SCAN_RADIUS = 4
 RESOLUTION = 0.1  # smaller = more accurate, slower
 SCAN_RADIUS_SAMPLED = int(SCAN_RADIUS / RESOLUTION)
 
@@ -26,26 +26,34 @@ def load_file(file_path):
     return positions, configs
 
 
-def calculate_coverage(positions, configs):
+def calculate_coverage(positions, configs, show_mat=False):
     grid_size = [float(x) for x in configs["RRFM_BOX_SIZE"].split(",")]
     cells_x = int(grid_size[0] / RESOLUTION)
     cells_y = int(grid_size[1] / RESOLUTION)
     covered = np.zeros((cells_x, cells_y))
     for x, y in positions:
+        # transform x and y position to index for numpy smaple grid
+        # x and y must be scaled by resolution and moved to positive x- and y-axis
         rx = int((x + grid_size[0] / 2) / RESOLUTION)
         ry = int((y + grid_size[1] / 2) / RESOLUTION)
+        # define square around each position, this will then be marked as covered
         min_x = rx - SCAN_RADIUS_SAMPLED
         max_x = rx + SCAN_RADIUS_SAMPLED
         min_y = ry - SCAN_RADIUS_SAMPLED
         max_y = ry + SCAN_RADIUS_SAMPLED
         for ix in range(min_x, max_x):
             for iy in range(min_y, max_y):
+                # cut of the corners and make it a circle
+                if (ix - min_x) ** 2 + (iy - min_y) ** 2 > SCAN_RADIUS_SAMPLED**2:
+                    continue
                 try:
+                    # transform to match plot orientation
                     covered[cells_y - iy, ix] = 1
                 except IndexError:
                     pass
-    # plt.matshow(covered)
-    # plt.show()
+    if show_mat:
+        plt.matshow(covered)
+        plt.show()
     total_cells = cells_x * cells_y
     covered_cells = np.count_nonzero(covered)
     coverage_percent = 100.0 * covered_cells / total_cells
@@ -53,7 +61,7 @@ def calculate_coverage(positions, configs):
 
 
 def main(args=None):
-    if args is None or len(args) != 2:
+    if args is None or len(args) < 2:
         print("Usage: python3 coverage.py recorded_positions.csv")
         exit(1)
     file_path = args[1]

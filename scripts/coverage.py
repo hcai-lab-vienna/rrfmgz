@@ -26,7 +26,7 @@ def load_file(file_path):
     return positions, configs
 
 
-def calculate_coverage(positions, configs, show_mat=False):
+def calculate_coverage(positions, configs, showmat=False):
     grid_size = [float(x) for x in configs["RRFM_BOX_SIZE"].split(",")]
     cells_x = int(grid_size[0] / RESOLUTION)
     cells_y = int(grid_size[1] / RESOLUTION)
@@ -51,7 +51,7 @@ def calculate_coverage(positions, configs, show_mat=False):
                     covered[cells_y - iy, ix] = 1
                 except IndexError:
                     pass
-    if show_mat:
+    if showmat:
         plt.matshow(covered)
         plt.show()
     total_cells = cells_x * cells_y
@@ -62,14 +62,33 @@ def calculate_coverage(positions, configs, show_mat=False):
 
 def main(args=None):
     if args is None or len(args) < 2:
-        print("Usage: python3 coverage.py recorded_positions.csv")
+        print("Usage: python3 coverage.py recorded_positions_*.csv")
+        print("Use `--showmat` to plot coverage.")
         exit(1)
-    file_path = args[1]
-    positions, configs = load_file(file_path)
-    coverage_percent = calculate_coverage(positions, configs)
-    for key, val in configs.items():
-        print(f"{key}={val}")
-    print(f"Coverage: {coverage_percent:.2f}%")
+    showmat = False
+    for arg in args:
+        if arg == "--showmat":
+            showmat = True
+            args.remove(arg)
+            break
+    segm_percentages = []
+    unsegm_percentages = []
+    for file_path in args[1:]:
+        positions, configs = load_file(file_path)
+        coverage_percent = calculate_coverage(positions, configs, showmat)
+        if configs["RRFM_ALWAYS_RANDOM_ROTATION"] == "1":
+            unsegm_percentages.append(coverage_percent)
+        else:
+            segm_percentages.append(coverage_percent)
+        for key, val in configs.items():
+            print(f"{key}={val}")
+        print(f"Coverage: {coverage_percent:.2f}%")
+    if len(segm_percentages) > 0:
+        avg_segm_percentage = sum(segm_percentages) / len(segm_percentages)
+        print(f"Average   segmented coverage: {avg_segm_percentage:.2f}%")
+    if len(unsegm_percentages) > 0:
+        avg_unsegm_percentage = sum(unsegm_percentages) / len(unsegm_percentages)
+        print(f"Average unsegmented coverage: {avg_unsegm_percentage:.2f}%")
 
 
 if __name__ == "__main__":
